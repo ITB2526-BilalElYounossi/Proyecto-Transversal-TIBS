@@ -49,6 +49,18 @@ inventory/inventory.ini
 Contenido:
 
 ```ini
+[ansible_controller]
+32.193.193.146 ansible_user=adminitb ansible_ssh_private_key_file=~/.ssh/I.pem
+
+[mariadb]
+10.0.142.205 ansible_user=adminitb ansible_ssh_private_key_file=~/.ssh/I.pem
+
+[logs]
+100.49.230.2 ansible_user=adminitb ansible_ssh_private_key_file=~/.ssh/I.pem
+
+[all:vars]
+ansible_become=true
+ansible_become_method=sudo
 
 ```
 
