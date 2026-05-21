@@ -99,6 +99,8 @@ Este playbook automatiza:
 
 - instalación de MariaDB,
 - configuración del servicio,
+- configuración del `bind-address` privado,
+- copia de los archivos SQL al servidor,
 - creación de la base de datos,
 - creación de tablas,
 - inserción de datos,
@@ -136,9 +138,11 @@ playbooks/logs_baseline.yml
 
 Este playbook automatiza:
 
-- instalación de herramientas de logs,
-- creación de carpetas,
-- configuración inicial del servidor.
+- actualización de repositorios,
+- instalación de `rsyslog`, `logrotate`, `htop` y `curl`,
+- activación del servicio `rsyslog`,
+- creación de la carpeta `/opt/innovatetech-logs`,
+- creación de un archivo README de validación.
 
 📸 Captura:
 
