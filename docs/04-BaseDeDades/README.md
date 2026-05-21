@@ -40,7 +40,8 @@ playbooks/mariadb.yml
 ```
 
 📸 Captura:
-- `capturas/install_mariadb.png`
+
+<img width="1036" height="906" alt="imatge" src="https://github.com/user-attachments/assets/91368929-6df0-4965-bdc0-4e88f5047608" />
 
 ---
 
@@ -54,7 +55,8 @@ USE innovatetech;
 ```
 
 📸 Captura:
-- `capturas/database_created.png`
+
+<img width="609" height="329" alt="imatge" src="https://github.com/user-attachments/assets/15fd4481-9d41-45f7-9ef2-61125ceb4d59" />
 
 ---
 
@@ -108,7 +110,8 @@ SHOW TABLES;
 ```
 
 📸 Captura:
-- `capturas/show_tables.png`
+
+<img width="336" height="353" alt="imatge" src="https://github.com/user-attachments/assets/865fb565-8834-4f5e-98ec-b11a52a307c5" />
 
 ---
 
@@ -123,8 +126,10 @@ SHOW CREATE TABLE trucades;
 ```
 
 📸 Captura:
-- `capturas/describe_tables.png`
-- `capturas/foreign_keys.png`
+
+<img width="886" height="474" alt="imatge" src="https://github.com/user-attachments/assets/35294af7-b876-4755-8e01-8353744f42a8" />
+
+<img width="1091" height="726" alt="imatge" src="https://github.com/user-attachments/assets/55d888fd-e768-4d15-bc5e-87c9ed5d4026" />
 
 ---
 
@@ -146,11 +151,44 @@ SELECT * FROM clients;
 ```
 
 📸 Captura:
-- `capturas/datos_prueba.png`
+
+<img width="1086" height="709" alt="imatge" src="https://github.com/user-attachments/assets/884f928f-f7dc-4a55-9cc8-3ab25d3f961e" />
+
+---
+# 10. Plantilla de mediciones de ancho de banda
+
+Para facilitar la integración entre el equipo audiovisual y la base de datos de InnovateTech, se ha definido una plantilla estándar en formato CSV para registrar las pruebas de ancho de banda realizadas sobre los servicios de streaming y videoconferencia.
+
+La plantilla permite almacenar:
+
+- fecha y hora de la medición,
+- usuario u operario responsable,
+- velocidad de descarga,
+- velocidad de subida,
+- latencia,
+- resultado de la prueba,
+- observaciones adicionales.
+
+Formato utilizado:
+
+```csv
+data_mesura,usuari,download_mbps,upload_mbps,latencia_ms,resultat,observacions
+2026-05-21 10:30:00,operari_audiovisual,850,420,2,acceptable,Streaming 1080p estable
+```
+
+Archivo utilizado:
+
+```bash
+files/templates/mesures_amplada_banda_template.csv
+```
+
+📸 Captura:
+
+<img width="897" height="59" alt="imatge" src="https://github.com/user-attachments/assets/226b18cf-6ee1-4f9a-970c-35f23883d716" />
 
 ---
 
-# 10. Roles y permisos
+# 11. Roles y permisos
 
 Roles implementados:
 
@@ -168,12 +206,14 @@ files/sql/roles.sql
 ```
 
 📸 Captura:
-- `capturas/roles.png`
-- `capturas/grants.png`
+
+<img width="518" height="262" alt="imatge" src="https://github.com/user-attachments/assets/7113a35b-9a33-4719-9dd6-8527eed47d96" />
+
+<img width="753" height="787" alt="imatge" src="https://github.com/user-attachments/assets/50528f9a-1559-4c4b-89d6-d2efe7449905" />
 
 ---
 
-# 11. Usuario web con permisos mínimos
+# 12. Usuario web con permisos mínimos
 
 Usuario creado:
 
@@ -195,11 +235,12 @@ SHOW GRANTS FOR 'web_innovate'@'10.0.1.%';
 ```
 
 📸 Captura:
-- `capturas/web_user_grants.png`
+
+<img width="1066" height="208" alt="imatge" src="https://github.com/user-attachments/assets/f725379f-2e2f-4050-93bd-a8e39771d1f9" />
 
 ---
 
-# 12. Script automatizado de usuarios
+# 13. Script automatizado de usuarios
 
 Script Python utilizado:
 
@@ -219,12 +260,14 @@ usuarios_generados.sql
 ```
 
 📸 Captura:
-- `capturas/script_python.png`
-- `capturas/usuarios_sql.png`
+
+<img width="651" height="547" alt="imatge" src="https://github.com/user-attachments/assets/d746e903-fd7b-4a35-ace7-ee9bad091a8c" />
+
+<img width="654" height="375" alt="imatge" src="https://github.com/user-attachments/assets/50e80578-2853-4745-9226-f4c90d620f3a" />
 
 ---
 
-# 13. Triggers de auditoría
+# 14. Triggers de auditoría
 
 Triggers implementados:
 
@@ -241,12 +284,16 @@ SELECT * FROM avisos;
 ```
 
 📸 Captura:
-- `capturas/triggers.png`
-- `capturas/avisos.png`
+
+- Triggers
+  
+<img width="1849" height="951" alt="imatge" src="https://github.com/user-attachments/assets/da25f9f4-e3df-4018-874e-990dba73e4b7" />
+
+<img width="959" height="224" alt="imatge" src="https://github.com/user-attachments/assets/bc84d4af-4a02-4b7a-888b-1ffb3d2558c7" />
 
 ---
 
-# 14. Events y backups automáticos
+# 15. Events y backups automáticos
 
 Event implementado:
 
@@ -262,12 +309,14 @@ SELECT * FROM backups_control;
 ```
 
 📸 Captura:
-- `capturas/events.png`
-- `capturas/backups_control.png`
+
+<img width="1850" height="221" alt="imatge" src="https://github.com/user-attachments/assets/38f98479-2b64-4af1-a5a9-0a951224d92b" />
+
+<img width="932" height="137" alt="imatge" src="https://github.com/user-attachments/assets/375da85e-b340-4c1e-bee6-c970004699e8" />
 
 ---
 
-# 15. Seguridad aplicada
+# 16. Seguridad aplicada
 
 Medidas implementadas:
 
@@ -285,11 +334,12 @@ Archivo modificado:
 ```
 
 📸 Captura:
-- `capturas/bind_address.png`
+
+<img width="739" height="41" alt="imatge" src="https://github.com/user-attachments/assets/9b77ad0e-2da6-4b34-928c-c4cd83d88f73" />
 
 ---
 
-# 16. Validación final
+# 17. Validación final
 
 Consultas utilizadas:
 
@@ -301,11 +351,18 @@ SELECT * FROM backups_control;
 ```
 
 📸 Captura:
-- `capturas/validacion_final.png`
+
+<img width="331" height="355" alt="imatge" src="https://github.com/user-attachments/assets/ef310c2a-7ef5-4f78-88c0-8f187d8c9d41" />
+
+-Triggers
+
+<img width="1848" height="932" alt="imatge" src="https://github.com/user-attachments/assets/fc0e2798-dd90-4030-89d3-fbc4a470f010" />
+
+<img width="1852" height="368" alt="imatge" src="https://github.com/user-attachments/assets/cca97b9b-9d79-4d85-9a10-e5030a8cff5d" />
 
 ---
 
-# 17. Conclusión
+# 18. Conclusión
 
 La base de datos de InnovateTech ha sido implementada utilizando MariaDB y automatizada mediante Ansible.
 
