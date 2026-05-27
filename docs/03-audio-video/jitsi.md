@@ -1,156 +1,226 @@
-# Jitsi Meet — Videoconferència
+# Multimedia — Jellyfin (Streaming de Vídeo)
 
-**Responsable:** Serghei  
-**Màquina:** EC2-4 — Ubuntu 22.04 LTS  
-**IP pública:** 3.219.249.6  
-**Ports:** 80, 443 TCP — 10000 UDP
-
----
-
-## 1. Descripció del servei
-
-Jitsi Meet és una plataforma de videoconferència de codi obert basada en WebRTC que permet realitzar videotrucades directament des del navegador sense instal·lar programari addicional. S'ha desplegat en un servidor EC2 separat (EC2-4) usant Docker Compose, que és el mètode oficial recomanat.
-
-S'utilitza a InnovateTech per a la comunicació interna entre departaments, reunions d'equip i formació corporativa.
+**Máquina:** EC2-3 — Ubuntu 22.04 LTS  
+**IP pública:** 100.31.147.184  
+**Puerto:** 8096 TCP
 
 ---
 
-## 2. Protocol WebRTC
+## 1. Descripción del servicio
 
-WebRTC (Web Real-Time Communication) és un estàndard obert que permet comunicació d'àudio, vídeo i dades en temps real directament entre navegadors.
+Jellyfin es un servidor de streaming de vídeo de código abierto que permite organizar, gestionar y distribuir contenido audiovisual a través de una interfaz web intuitiva. Soporta transcodificación en tiempo real y es accesible desde cualquier navegador moderno sin plugins adicionales.
 
-| Component | Funció |
+Se ha elegido Jellyfin porque el enunciado lo menciona explícitamente como opción válida, tiene interfaz web visual que facilita la demostración y soporta de forma nativa H.264 y MP4.
+
+---
+
+## 2. Requerimientos
+
+- Descripción de la funcionalidad del servicio de vídeo.
+- Instalación y configuración de Jellyfin como servidor de vídeo.
+- Subida de al menos un vídeo accesible desde el servicio.
+- Uso del formato MP4 y el codec H.264.
+- Verificación de la reproducción desde navegador.
+- Documentación de la instalación, configuración y pruebas.
+---
+
+## 3. Instalación
+
+*Servidor: EC2-3 — Ubuntu 22.04 LTS — Puerto 8096 TCP abierto en el Security Group de AWS*
+
+**Paso 1 — Instalar usando el script oficial de Jellyfin:**
+
+```bash
+curl -fsSL https://repo.jellyfin.org/install-debuntu.sh | sudo bash
+```
+
+> **Nota:** Si el script falla por espacio insuficiente en `/tmp`, ampliar primero:
+> ```bash
+> sudo mount -o remount,size=4G /tmp
+> ```
+
+**Paso 2 — Activar e iniciar:**
+
+```bash
+sudo systemctl enable jellyfin
+sudo systemctl start jellyfin
+```
+
+> 📸 **<img width="734" height="476" alt="unnamed" src="https://github.com/user-attachments/assets/514273f0-aa61-4e6a-b34c-2b00fc0331b4" />
+** — Terminal mostrando la instalación completada de Jellyfin  
+> 📸 **<img width="734" height="476" alt="unnamed" src="https://github.com/user-attachments/assets/d8f4b2b0-6b9c-44ac-a706-979eb81ed230" />
+** — `systemctl status jellyfin` mostrando estado `active (running)`
+
+---
+
+## 4. Configuración del servicio
+
+### Paso 1 — Crear directorio y descargar vídeo de prueba
+
+```bash
+sudo mkdir -p /media/videos
+sudo chown jellyfin:jellyfin /media/videos
+sudo wget -O /media/videos/video_prueba.mp4 "https://www.w3schools.com/html/mov_bbb.mp4"
+sudo chown jellyfin:jellyfin /media/videos/video_prueba.mp4
+```
+
+Verificación de que el archivo se descargó correctamente:
+
+```bash
+ls -la /media/videos/
+```
+
+### Paso 2 — Configuración inicial via wizard web
+
+Acceder a `http://100.31.147.184:8096` y seguir el wizard:
+
+| Paso | Acción |
 |---|---|
-| ICE / STUN / TURN | Troba la millor ruta de xarxa entre els clients i gestiona connexions darrere de NAT |
-| DTLS | Xifra totes les connexions d'extrem a extrem |
-| SRTP | Protocol segur per transmetre àudio i vídeo en temps real |
-| SDP | Negocia els paràmetres i capacitats de cada client |
+| 1. Bienvenida | Hacer clic en Siguiente |
+| 2. Idioma | Seleccionar el idioma y hacer clic en Siguiente |
+| 3. Usuario administrador | Crear usuario: `jellyfin` con contraseña segura |
+| 4. Biblioteca de medios | Hacer clic en Añadir biblioteca de medios |
+| 5. Tipo de biblioteca | Seleccionar *Vídeos y fotos personales* (acepta cualquier MP4) |
+| 6. Directorio | Añadir la ruta: `/media/videos` |
+| 7. Finalizar | Hacer clic en Siguiente y Terminar |
+
+> 📸 **Captura 11** — Wizard de configuración inicial de Jellyfin con la biblioteca configurada  
+> 📸 **Captura 12** — Biblioteca creada con el vídeo visible en el panel de Jellyfin
 
 ---
 
-## 3. Requeriments
+## 5. Formatos y codecs utilizados
 
-- Descripció del servei Jitsi Meet i del protocol WebRTC.
-- Instal·lació i configuració de Jitsi Meet en servidor separat (EC2-4).
-- Accés al servei des del navegador.
-- Realització d'almenys una videotrucada funcional entre dos usuaris.
-
-### Requisits mínims obligatoris
-
-| | Requisit |
-|---|---|
-| ✅ | Servei de videoconferència instal·lat i operatiu a EC2-4 |
-| ✅ | Accés funcional des del navegador web |
-| ✅ | Almenys 1 videotrucada funcional entre dos usuaris |
-| ✅ | Protocol WebRTC documentat |
-
----
-
-## 4. Instal·lació amb Docker a EC2-4
-
-*Servidor: EC2-4 — Ubuntu 22.04 LTS — Servidor separat del EC2-3. Ports: 80, 443 TCP i 10000 UDP oberts al Security Group.*
-
-**Pas 1 — Actualitzar i instal·lar Docker:**
-
-```bash
-sudo apt update && sudo apt upgrade -y
-curl -fsSL https://get.docker.com | sudo bash
-sudo apt install docker-compose-plugin -y
-sudo systemctl enable docker && sudo systemctl start docker
-```
-
-**Pas 2 — Descarregar i configurar Jitsi Meet:**
-
-```bash
-cd /opt && sudo git clone https://github.com/jitsi/docker-jitsi-meet
-cd docker-jitsi-meet && sudo cp env.example .env
-sudo bash gen-passwords.sh
-mkdir -p ~/.jitsi-meet-cfg/{web,transcripts,prosody/config,prosody/prosody-plugins-custom,jicofo,jvb,jigasi,jibri}
-```
-
-**Pas 3 — Arrencar els contenidors:**
-
-```bash
-sudo docker-compose up -d
-```
-
-**Pas 4 — Verificar que tots els contenidors estan actius:**
-
-```bash
-sudo docker-compose ps
-```
-
-> 📸 **Captura 15** — Terminal mostrant els contenidors de Jitsi arrancant correctament  
-> 📸 **Captura 16** — `docker-compose ps` mostrant els 4 contenidors en estat `Up`
-
----
-
-## 5. Configuració de l'arxiu .env
-
-L'arxiu `.env` conté la configuració principal. S'edita amb:
-
-```bash
-sudo nano /opt/docker-jitsi-meet/.env
-```
-
-| Paràmetre | Valor configurat | Descripció |
+| Elemento | Valor | Descripción |
 |---|---|---|
-| `HTTP_PORT` | 8000 | Port HTTP d'accés a Jitsi Meet |
-| `HTTPS_PORT` | 8443 | Port HTTPS d'accés a Jitsi Meet |
-| `TZ` | UTC | Zona horària del servidor |
-| `PUBLIC_URL` | https://3.219.249.6:8443 | URL pública completa amb port. Necessari per WebRTC. |
-| `ENABLE_AUTH` | 0 | Sense autenticació (qualsevol pot crear sala) |
-| `ENABLE_GUESTS` | 1 | Permet convidats sense compte |
-| `JVB_PORT` | 10000 | Port UDP per a tràfic de vídeo. OBLIGATORI obrir-lo a AWS |
-| `JITSI_IMAGE_VERSION` | stable-9646 | Versió estable de Jitsi. Necessari per evitar error SCRAM-SHA-1. |
-
-> 📸 **Captura 17** — Arxiu `.env` amb els paràmetres de configuració de Jitsi Meet
+| Contenedor | MP4 (`.mp4`) | Formato estándar universal para distribución de vídeo en web |
+| Codec vídeo | H.264 (AVC) | Codec más compatible. Soportado por todos los navegadores modernos sin plugins |
+| Codec audio | AAC | Audio comprimido de alta calidad incluido en el contenedor MP4 |
+| Protocolo | HTTP Progressive | Jellyfin sirve el vídeo via HTTP. El navegador lo reproduce progresivamente |
 
 ---
 
-## 6. Prova de videotrucada
+## 6. Reproducción desde el navegador
 
-Accedir des del navegador a `https://3.219.249.6:8443` (acceptar el certificat autosignat: *Avançat > Continuar*) i:
+Una vez el vídeo está en la biblioteca, se accede desde cualquier navegador en `http://100.31.147.184:8096`. Jellyfin proporciona un player web integrado con controles de reproducción, volumen y calidad.
 
-1. **Usuari 1:** crear sala amb nom `prueba-innovatetech` i entrar.
-2. **Usuari 2:** obrir la mateixa URL en mode incògnit (`Ctrl+Shift+N`) o en un altre dispositiu.
-3. Verificar que ambdós usuaris es veuen i s'escolten correctament.
-
-> ⚠️ WebRTC requereix HTTPS per accedir a càmera i micròfon. Si el navegador bloqueja el micròfon, acceptar el certificat autosignat correctament.
-
-> 📸 **Captura 18** — Jitsi Meet obert al navegador amb la pantalla d'inici  
-> 📸 **Captura 19** — Videotrucada activa entre dos usuaris
+> 📸 **Captura 13** — Vídeo reproduciéndose en el navegador desde Jellyfin (player con controles visible)  
+> 📸 **Captura 14** — Información técnica del vídeo mostrando codec H.264 y formato MP4
 
 ---
 
-## 7. Validació del servei
+## 7. Validación del servicio
 
-- Videotrucada funcional en temps real entre dos usuaris.
-- Àudio i vídeo bidireccional correctes.
-- Accés des del navegador sense instal·lar programari addicional.
+- Reproducción correcta del vídeo desde el navegador web.
+- Acceso funcional desde diferentes dispositivos.
+- El vídeo muestra la información correcta de codec (H.264) y formato (MP4).
 
 ---
 
-## 8. Incidències i solucions
+## 8. Incidencias y soluciones
 
-| Incidència | Solució aplicada |
+| Incidencia | Solución aplicada |
 |---|---|
-| `E: Unable to locate package docker-compose-plugin` | Instal·lar Docker modern: `curl -fsSL https://get.docker.com \| sudo bash` |
-| `unknown shorthand flag: d` / `docker: unknown command` | Versió antiga de Docker. Instal·lar versió moderna amb el script oficial de Docker. |
-| `KeyError: ContainerConfig` en executar `docker-compose up` | Incompatibilitat entre docker-compose 1.29.2 i les imatges noves de Jitsi. Instal·lar Docker modern. |
-| `SASLError SCRAM-SHA-1: not-authorized` als logs del jvb | Usar versió estable de Jitsi. Afegir a `.env`: `JITSI_IMAGE_VERSION=stable-9646`. Esborrar `~/.jitsi-meet-cfg` i regenerar amb `gen-passwords.sh` |
-| *Ha estat desconnectat* en entrar a la reunió | `PUBLIC_URL` no incloïa el port. Canviat a: `PUBLIC_URL=https://3.219.249.6:8443` |
-| `ERR_CONNECTION_REFUSED` en accedir a Jitsi | Ports 8000 i 8443 no estaven oberts al Security Group del EC2-4 a AWS. |
+| `Insufficient free space for /tmp` durante instalación | Ejecutar: `sudo mount -o remount,size=4G /tmp` antes de instalar |
+| El vídeo no aparece en la biblioteca *Películas* | Cambiar tipo de biblioteca de *Películas* a *Vídeos y fotos personales* (más permisivo) |
+| `Permission denied` al hacer scp del vídeo | Descargar el vídeo directamente en el servidor con `wget` en lugar de `scp` |
+| La biblioteca no escanea el vídeo nuevo | Hacer clic en *Escanear todas las mediatecas* desde el panel de administración de Jellyfin |
 
 ---
 
-## 9. Security Group — SG-JITSI
+## 9. Security Group — SG-MULTIMEDIA
 
-| Direcció | Protocol | Port | Origen |
+| Dirección | Protocolo | Puerto | Origen |
 |---|---|---|---|
-| Entrada | TCP | 80 | 0.0.0.0/0 |
-| Entrada | TCP | 443 | 0.0.0.0/0 |
-| Entrada | UDP | 10000 | 0.0.0.0/0 |
-| Entrada | TCP | 4443 | 0.0.0.0/0 |
+| Entrada | TCP | 8096 | 0.0.0.0/0 |
+| Entrada | TCP | 8000 | 0.0.0.0/0 |
 | Entrada | TCP | 22 | 0.0.0.0/0 |
-| Sortida | TCP/UDP | 514 | 10.0.0.0/16 |
+| Salida | TCP/UDP | 514 | 10.0.0.0/16 |
+
+---
+
+## 10. Comprobaciones de Ancho de Banda
+
+### 10.1 Objetivo
+
+Garantizar que la infraestructura desplegada es capaz de soportar los servicios de audio, vídeo y videoconferencia sin degradación del servicio.
+
+### 10.2 Requisitos mínimos obligatorios
+
+| | Requisito |
+|---|---|
+| ✅ | Realización de al menos 2 pruebas de ancho de banda |
+| ✅ | Mostrar download, upload y latencia en cada prueba |
+| ✅ | Relacionar los resultados con los tres servicios multimedia |
+| ✅ | Clasificar el sistema como Aceptable o No aceptable |
+| ✅ | Incluir evidencias (capturas) y conclusión técnica |
+
+### 10.3 Herramientas utilizadas
+
+```bash
+sudo apt install iperf3 -y
+pip3 install speedtest-cli --break-system-packages
+```
+
+| Herramienta | Función |
+|---|---|
+| `speedtest-cli` | Mide velocidad de bajada, subida y latencia contra servidores de internet |
+| `iperf3` | Mide rendimiento de red entre dos equipos de la infraestructura |
+| `ping` | Mide la latencia hacia un destino específico |
+
+### 10.4 Prueba 1 — Sin servicios activos (línea base)
+
+*Condiciones: ningún servicio multimedia activo. Medida de referencia.*
+
+```bash
+speedtest-cli --simple
+ping -c 20 8.8.8.8
+```
+
+> 📸 **Captura 20** — Resultado de `speedtest-cli` sin servicios activos mostrando download, upload y latencia
+
+| Medida | Valor obtenido |
+|---|---|
+| Download | 47 Mbps |
+| Upload | 8,5 Mbps |
+| Latencia (ping) | 1,97 ms |
+
+### 10.5 Prueba 2 — Con todos los servicios activos
+
+*Condiciones: Icecast2 emitiendo + Jellyfin reproduciendo vídeo + Jitsi Meet en videollamada activa.*
+
+```bash
+speedtest-cli --simple
+ping -c 20 8.8.8.8
+```
+
+> 📸 **Captura 21** — Los tres servicios activos simultáneamente en pantalla  
+> 📸 **Captura 22** — `speedtest-cli` con servicios activos mostrando download, upload y latencia
+
+| Medida | Valor obtenido |
+|---|---|
+| Download | 191 Mbps |
+| Upload | 6,7 Mbps |
+| Latencia (ping) | 1,95 ms |
+
+### 10.6 Análisis de resultados
+
+| Servicio | Consumo estimado de red | Tipo de tráfico |
+|---|---|---|
+| Icecast2 (MP3 128kbps) | ~0,13 Mbps por oyente | Upload desde el servidor |
+| Jellyfin (H.264 720p) | ~2–4 Mbps por stream | Download hacia el cliente |
+| Jitsi Meet (720p, 2 usuarios) | ~1,5–3 Mbps por participante | Upload y download bidireccional |
+| **Total estimado** | **~4–8 Mbps** | Combinado |
+
+### 10.7 Clasificación del sistema
+
+✅ **ACEPTABLE** — La infraestructura soporta los tres servicios sin degradación significativa. La latencia se mantiene por debajo de los 2 ms en ambas pruebas y la velocidad de descarga es muy superior al consumo estimado de los servicios.
+
+### 10.8 Propuestas de optimización
+
+| Propuesta | Beneficio esperado |
+|---|---|
+| Aumentar tipo de instancia EC2 (`t3.micro` → `t3.medium`) | Más CPU y RAM para procesar streams simultáneos |
+| Reducir bitrate Icecast2 de 128kbps a 96kbps | Menor consumo de ancho de banda manteniendo calidad aceptable |
+| Separar Jellyfin en su propio EC2 | Cada servicio tiene recursos dedicados sin competencia |
+| Configurar QoS en la VPC de AWS | Priorizar tráfico de videoconferencia sobre el resto |
