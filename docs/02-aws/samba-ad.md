@@ -190,7 +190,103 @@ Estas comprobaciones permiten validar que los usuarios están registrados correc
 
 ## 8. Creación de grupos del dominio
 
+Además de los usuarios, se crearon grupos dentro de Samba AD para representar las diferentes áreas de trabajo de InnovateTech.
+
+El uso de grupos permite organizar los usuarios según su departamento o función dentro de la empresa. Esta separación se utiliza posteriormente en el portal web para mostrar información diferente según el perfil del usuario.
+
+Los grupos principales creados fueron:
+
+| Grupo | Función |
+|---|---|
+| `vendes` | Grupo del área de ventas |
+| `administracio` | Grupo del área de administración |
+| `suport` | Grupo del área de soporte técnico |
+| `logistica` | Grupo del área de logística |
+| `portal_admins` | Grupo de administradores del portal interno |
+
+El comando utilizado para crear grupos en Samba AD fue:
+
+```bash
+sudo samba-tool group add nombre_grupo
+```
+
+Por ejemplo, para crear el grupo de administradores del portal se utilizó:
+
+```bash
+sudo samba-tool group add portal_admins
+```
+
+Después se añadieron usuarios a sus grupos correspondientes con:
+
+```bash
+sudo samba-tool group addmembers nombre_grupo nombre.usuario
+```
+
+Por ejemplo, para añadir el usuario administrador al grupo `portal_admins`:
+
+```bash
+sudo samba-tool group addmembers portal_admins admin.itb
+```
+
+Para comprobar que los grupos existían correctamente se ejecutó:
+
+```bash
+sudo samba-tool group list | grep -E "vendes|administracio|suport|logistica|portal_admins"
+```
+
+También se comprobaron los miembros de cada grupo:
+
+```bash
+sudo samba-tool group listmembers vendes
+sudo samba-tool group listmembers administracio
+sudo samba-tool group listmembers suport
+sudo samba-tool group listmembers logistica
+sudo samba-tool group listmembers portal_admins
+```
+
+La comprobación del grupo `portal_admins` mostró que el usuario `admin.itb` pertenece correctamente a este grupo.
+
+**Evidencia:** captura donde se comprueba la existencia de los grupos del dominio y los usuarios asignados a cada grupo.
+<img width="785" height="271" alt="{C7ABC031-AD9A-4338-959D-D6D7279800B5}" src="https://github.com/user-attachments/assets/d6d08110-96cb-4e50-bfa7-3407626d07c0" />
+
+En la captura se comprueba que los grupos principales del dominio existen en Samba AD y que el usuario `admin.itb` pertenece al grupo `portal_admins`.
 ## 9. Usuario administrativo admin.itb
+Los usuarios y grupos creados en Samba AD se utilizan posteriormente en el portal web interno de InnovateTech.
+
+El objetivo de esta relación es que cada usuario del dominio tenga un perfil asociado dentro del portal. De esta forma, al iniciar sesión con sus credenciales corporativas, la aplicación web puede mostrar información diferente según el usuario autenticado.
+
+La relación utilizada fue la siguiente:
+
+| Usuario | Grupo Samba AD | Perfil en el portal | Información visible |
+|---|---|---|---|
+| `joan.garcia` | `vendes` | Área de ventas | Clientes, productos, pedidos y vídeos |
+| `maria.lopez` | `administracio` | Área de administración | Empleados, nóminas, departamentos y vídeos |
+| `pere.martinez` | `suport` | Área de soporte | Avisos, backups, mediciones de ancho de banda y vídeos |
+| `anna.puig` | `logistica` | Área de logística | Productos, pedidos, cistell y vídeos |
+| `admin.itb` | `portal_admins` | Administración global | Acceso completo a todas las tablas |
+
+Esta configuración permite simular un entorno empresarial real, donde los usuarios no acceden todos a la misma información, sino que cada perfil consulta únicamente los datos relacionados con su función dentro de la empresa.
+
+El flujo de funcionamiento es el siguiente:
+
+```text
+Usuario del dominio
+        ↓
+Login en el portal web
+        ↓
+Validación contra Samba AD mediante LDAP/TLS
+        ↓
+Creación de sesión PHP
+        ↓
+Asignación de perfil dentro del portal
+        ↓
+Visualización de tablas permitidas desde MariaDB
+```
+<img width="1201" height="291" alt="{BE8C3A3C-267A-4822-BB8E-B6736011C831}" src="https://github.com/user-attachments/assets/993846b3-f52e-4283-9df3-8e16308e44ec" />
+En esta captura se comprueba que el usuario `joan.garcia` inicia sesión con credenciales del dominio y accede únicamente a la información asociada al perfil de ventas.
+
+<img width="1202" height="296" alt="{1A45F620-93F7-4E52-8E06-8A55C26604A4}" src="https://github.com/user-attachments/assets/9bc3de0a-6c67-4ce3-943c-ab8bf92b96f0" />
+En esta captura se observa que el usuario `admin.itb` pertenece al grupo `portal_admins` y dispone de acceso completo a las secciones del portal.
 
 ## 10. Comprobaciones realizadas
 
