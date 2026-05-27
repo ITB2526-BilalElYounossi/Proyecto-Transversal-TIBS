@@ -1,6 +1,5 @@
 # Icecast2 — Streaming de Audio
 
-**Responsable:** Serghei  
 **Máquina:** EC2-3 — Ubuntu 22.04 LTS  
 **IP pública:** 100.31.147.184  
 **Puerto:** 8000 TCP
@@ -62,8 +61,7 @@ sudo systemctl start icecast2
 ```bash
 sudo systemctl status icecast2
 ```
-<img width="735" height="306" alt="unnamed" src="https://github.com/user-attachments/assets/cb195cfe-1e86-4398-80a1-9c6afc0ef284" />
-<img width="730" height="345" alt="unnamed" src="https://github.com/user-attachments/assets/1487fb39-67bb-490f-8a2c-e8f7c6f30230" />
+<img width="730" height="345" alt="unnamed" src="https://github.com/user-attachments/assets/1414b292-e400-498c-aa8e-32a72929282f" />
 
 
 ---
@@ -93,8 +91,9 @@ Después de modificar el archivo, reiniciar el servicio:
 ```bash
 sudo systemctl restart icecast2
 ```
-<img width="723" height="200" alt="unnamed" src="https://github.com/user-attachments/assets/7a1e01fb-42ab-4f5c-8704-3f77cc9fc81e" />
-<img width="735" height="306" alt="unnamed" src="https://github.com/user-attachments/assets/e787b4cd-85ba-466f-a37e-3694e9fec988" />
+<img width="723" height="200" alt="unnamed" src="https://github.com/user-attachments/assets/cfd360ea-93a3-4aec-81fc-5fdac719ede9" />
+<img width="735" height="306" alt="unnamed" src="https://github.com/user-attachments/assets/4c676f75-c7c2-434c-a325-33ae28d91605" />
+
 
 ---
 
@@ -105,7 +104,8 @@ En lugar de usar BUTT desde un PC local, se emite audio directamente desde el se
 **Paso 1 — Descargar canciones en el servidor:**
 
 ```bash
-sudo mkdir -p /media/musica && cd /media/musica
+sudo mkdir -p /media/mu<img width="1778" height="515" alt="unnamed" src="https://github.com/user-attachments/assets/e7e53a55-1f96-4c0f-98ad-8e78a6566756" />
+sica && cd /media/musica
 wget https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
 ```
 
@@ -120,9 +120,9 @@ wget https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
 | Password | [source-password] | La configurada en icecast.xml |
 | Mount | stream | Canal configurado en icecast.xml (sin barra inicial) |
 | Format | MP3 — 128 kbps — 44100 Hz | Formato y calidad del audio emitido |
+<img width="1776" height="632" alt="unnamed" src="https://github.com/user-attachments/assets/9ead34e2-0a60-4c02-9cb5-4e8b0c5b07bf" />
+<img width="1778" height="515" alt="unnamed" src="https://github.com/user-attachments/assets/6b12cd28-427f-4f4e-8c4c-ef90e08b3ee2" />
 
-<img width="1778" height="515" alt="unnamed" src="https://github.com/user-attachments/assets/4e15a2d9-f63f-46e8-91ea-c97e083c9036" />
-<img width="1776" height="632" alt="unnamed" src="https://github.com/user-attachments/assets/0c2c72f9-27bb-4d34-970a-1f8c636b11cd" />
 
 ---
 
@@ -133,12 +133,10 @@ Una vez ffmpeg está emitiendo las canciones, el servicio es accesible desde cua
 - **Panel de administración:** http://100.31.147.184:8000
 - **URL directa del stream:** http://100.31.147.184:8000/stream
 
-> 📸 **Captura 6** — Panel web de Icecast2 mostrando Mountpoint `/stream` activo con bitrate 128 y listeners<img width="1852" height="973" alt="unnamed" src="https://github.com/user-attachments/assets/03aa4d93-e11c-443d-8c2d-1d326b54def0" />
-<img width="1852" height="973" alt="unnamed" src="https://github.com/user-attachments/assets/91e9b00e-c186-48c9-9655-73d1e0e5d788" />
+<img width="1852" height="973" alt="unnamed" src="https://github.com/user-attachments/assets/400b420b-7aca-488b-9778-f136ed7c467b" />
+
 
 > 📸 **Capt![Uploading unnamed.png…]()
-ura 7** — Navegador reproduciendo el stream de audio  
-> 📸 **Captura 8** — Panel Icecast2 con listeners conectados
 
 ---
 
