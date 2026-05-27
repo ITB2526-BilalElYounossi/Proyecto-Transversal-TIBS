@@ -46,8 +46,8 @@ sudo systemctl enable jellyfin
 sudo systemctl start jellyfin
 ```
 
-<img width="734" height="476" alt="unnamed" src="https://github.com/user-attachments/assets/514273f0-aa61-4e6a-b34c-2b00fc0331b4" />
-<img width="734" height="476" alt="unnamed" src="https://github.com/user-attachments/assets/d8f4b2b0-6b9c-44ac-a706-979eb81ed230" />
+> <img width="734" height="476" alt="unnamed" src="https://github.com/user-attachments/assets/514273f0-aa61-4e6a-b34c-2b00fc0331b4" />
+> <img width="734" height="476" alt="unnamed" src="https://github.com/user-attachments/assets/d8f4b2b0-6b9c-44ac-a706-979eb81ed230" />
 
 ---
 
@@ -82,8 +82,7 @@ Acceder a `http://100.31.147.184:8096` y seguir el wizard:
 | 6. Directorio | Añadir la ruta: `/media/videos` |
 | 7. Finalizar | Hacer clic en Siguiente y Terminar |
 
-<img width="904" height="542" alt="unnamed" src="https://github.com/user-attachments/assets/fb304ec5-356b-41c8-8b15-c57c0eab0ec6" />
-
+> <img width="904" height="542" alt="unnamed" src="https://github.com/user-attachments/assets/fb304ec5-356b-41c8-8b15-c57c0eab0ec6" />
 > <img width="1082" height="588" alt="unnamed" src="https://github.com/user-attachments/assets/71cd22c3-1dc4-4336-8f5b-b24eee1f64ee" />
 
 
@@ -104,8 +103,8 @@ Acceder a `http://100.31.147.184:8096` y seguir el wizard:
 
 Una vez el vídeo está en la biblioteca, se accede desde cualquier navegador en `http://100.31.147.184:8096`. Jellyfin proporciona un player web integrado con controles de reproducción, volumen y calidad.
 
-> 📸 **Captura 13** — Vídeo reproduciéndose en el navegador desde Jellyfin (player con controles visible)  
-> 📸 **Captura 14** — Información técnica del vídeo mostrando codec H.264 y formato MP4
+> <img width="1018" height="573" alt="unnamed" src="https://github.com/user-attachments/assets/5313df71-e4a5-4e43-8799-13e1255932f1" />
+> <img width="993" height="621" alt="unnamed" src="https://github.com/user-attachments/assets/e3826473-33b6-4501-ab1b-0c740559702e" />
 
 ---
 
@@ -159,48 +158,50 @@ Garantizar que la infraestructura desplegada es capaz de soportar los servicios 
 
 ```bash
 sudo apt install iperf3 -y
-pip3 install speedtest-cli --break-system-packages
 ```
 
 | Herramienta | Función |
 |---|---|
-| `speedtest-cli` | Mide velocidad de bajada, subida y latencia contra servidores de internet |
-| `iperf3` | Mide rendimiento de red entre dos equipos de la infraestructura |
 | `ping` | Mide la latencia hacia un destino específico |
+| `curl` | Mide la velocidad de descarga contra un servidor externo |
+| `dd + curl` | Mide la velocidad de subida enviando datos a un servidor externo |
+| `iperf3` | Mide el rendimiento de red entre dos equipos de la infraestructura |
 
-### 10.4 Prueba 1 — Sin servicios activos (línea base)
+### 10.4 Prueba 1 - Sin servicios activos (línea base)
 
 *Condiciones: ningún servicio multimedia activo. Medida de referencia.*
 
 ```bash
-speedtest-cli --simple
 ping -c 20 8.8.8.8
+curl -o /dev/null -w "Download: %{speed_download} bytes/s\n" https://proof.ovh.net/files/10Mb.dat
+dd if=/dev/zero bs=1M count=10 | curl -o /dev/null -w "Upload: %{speed_upload} bytes/s\n" -X POST -T - https://httpbin.org/post
+iperf3 -c iperf.worldstream.nl -t 10
 ```
-
-> 📸 **Captura 20** — Resultado de `speedtest-cli` sin servicios activos mostrando download, upload y latencia
+> <img width="729" height="472" alt="unnamed" src="https://github.com/user-attachments/assets/f24bbd6b-d3ba-4acd-ac1b-85f51dd7c7e6" />
+> <img width="858" height="117" alt="unnamed" src="https://github.com/user-attachments/assets/21a6649a-46dc-4e09-ab3a-b7f2f87ecb8b" />
+> <img width="854" height="195" alt="unnamed" src="https://github.com/user-attachments/assets/172b7e82-f45d-450b-9480-096bd3afbd23" />
 
 | Medida | Valor obtenido |
 |---|---|
-| Download | 47 Mbps |
-| Upload | 8,5 Mbps |
+| Download | ~47 Mbps (5.929.028 bytes/s) |
+| Upload | ~8,5 Mbps (1.061.317 bytes/s) |
 | Latencia (ping) | 1,97 ms |
 
-### 10.5 Prueba 2 — Con todos los servicios activos
+### 10.5 Prueba 2 - Con todos los servicios activos
 
 *Condiciones: Icecast2 emitiendo + Jellyfin reproduciendo vídeo + Jitsi Meet en videollamada activa.*
 
 ```bash
-speedtest-cli --simple
 ping -c 20 8.8.8.8
+curl -o /dev/null -w "Download: %{speed_download} bytes/s\n" https://proof.ovh.net/files/100Mb.dat
+dd if=/dev/zero bs=1M count=10 | curl -o /dev/null -w "Upload: %{speed_upload} bytes/s\n" -X POST -T - https://httpbin.org/post
 ```
-
-> 📸 **Captura 21** — Los tres servicios activos simultáneamente en pantalla  
-> 📸 **Captura 22** — `speedtest-cli` con servicios activos mostrando download, upload y latencia
+> <img width="854" height="413" alt="unnamed" src="https://github.com/user-attachments/assets/4b568cbd-9426-4eff-9807-140cc0c7d511" />
 
 | Medida | Valor obtenido |
 |---|---|
-| Download | 191 Mbps |
-| Upload | 6,7 Mbps |
+| Download | ~191 Mbps (23.897.610 bytes/s) |
+| Upload | ~6,7 Mbps (843.120 bytes/s) |
 | Latencia (ping) | 1,95 ms |
 
 ### 10.6 Análisis de resultados
@@ -212,9 +213,15 @@ ping -c 20 8.8.8.8
 | Jitsi Meet (720p, 2 usuarios) | ~1,5–3 Mbps por participante | Upload y download bidireccional |
 | **Total estimado** | **~4–8 Mbps** | Combinado |
 
+| Medida | Prueba 1 (sin servicios) | Prueba 2 (con servicios) | Diferencia |
+|---|---|---|---|
+| Download (Mbps) | ~47 | ~191 | +144 Mbps |
+| Upload (Mbps) | ~8,5 | ~6,7 | -1,8 Mbps |
+| Latencia (ms) | 1,97 | 1,95 | -0,02 ms |
+
 ### 10.7 Clasificación del sistema
 
-✅ **ACEPTABLE** — La infraestructura soporta los tres servicios sin degradación significativa. La latencia se mantiene por debajo de los 2 ms en ambas pruebas y la velocidad de descarga es muy superior al consumo estimado de los servicios.
+✅ **ACEPTABLE** - La infraestructura soporta los tres servicios sin degradación significativa. La latencia se mantiene estable por debajo de los 2 ms en ambas pruebas. La velocidad de descarga es muy superior al consumo estimado de los servicios (~4–8 Mbps). La ligera bajada de upload con servicios activos es normal y no afecta al funcionamiento.
 
 ### 10.8 Propuestas de optimización
 
