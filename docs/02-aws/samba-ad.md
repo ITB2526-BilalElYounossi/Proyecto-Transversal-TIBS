@@ -49,11 +49,11 @@ Los paquetes principales utilizados fueron:
 sudo apt update
 sudo apt install -y samba krb5-user winbind smbclient dnsutils acl attr
 ```
-> **Evidencia:** captura donde se comprueba que Samba, Kerberos y las herramientas de administración del dominio están instaladas correctamente en el servidor `samba-ad`.
-<img width="273" height="95" alt="{B9B41FF2-121B-47F7-919E-1742B47670F6}" src="https://github.com/user-attachments/assets/2050b02e-8e3e-4ba3-aad6-d940fbfaa2e2" />
+**Evidencia:** captura donde se comprueba que Samba, Kerberos y las herramientas de administración del dominio están instaladas correctamente en el servidor `samba-ad`.
 
-<img width="699" height="214" alt="{776F52C1-8083-4D1A-85AD-37ACF5300D57}" src="https://github.com/user-attachments/assets/2191067c-0811-477d-8ba4-d28f99169542" />
+<img width="273" height="95" alt="Comprobación herramientas Samba y Kerberos" src="https://github.com/user-attachments/assets/2050b02e-8e3e-4ba3-aad6-d940fbfaa2e2" />
 
+<img width="699" height="214" alt="Servicio Samba AD activo" src="https://github.com/user-attachments/assets/2191067c-0811-477d-8ba4-d28f99169542" />
 
 ## 5. Provisionado del dominio
 Una vez instalados los paquetes necesarios, se configuró el servidor `samba-ad` como controlador de dominio de InnovateTech.
@@ -91,10 +91,46 @@ sudo testparm
 ```
 El comando `testparm` permite validar que la configuración de Samba no contiene errores de sintaxis.
 
-> **Evidencia:** insertar captura donde se vea la información del dominio con `sudo samba-tool domain info 127.0.0.1` y la validación de configuración con `sudo testparm`.
-> <img width="413" height="143" alt="{BDCB07D1-B5E5-47EB-ACF3-7C3ED9F75D8B}" src="https://github.com/user-attachments/assets/6904be5b-189d-4d60-aa74-7b48dc4fa36b" /><img width="518" height="663" alt="{ECC328F6-61ED-480A-8615-56BCA6EE820B}" src="https://github.com/user-attachments/assets/44aa2558-9e78-4817-839e-e9545a46ba4e" />
+> **Evidencia:** captura donde se comprueba la información del dominio y la validación de la configuración de Samba.
+
+<img width="413" height="143" alt="{BDCB07D1-B5E5-47EB-ACF3-7C3ED9F75D8B}" src="https://github.com/user-attachments/assets/6904be5b-189d-4d60-aa74-7b48dc4fa36b" />
+<img width="518" height="663" alt="{ECC328F6-61ED-480A-8615-56BCA6EE820B}" src="https://github.com/user-attachments/assets/44aa2558-9e78-4817-839e-e9545a46ba4e" />
 
 ## 6. Configuración de DNS y Kerberos
+Samba AD necesita DNS y Kerberos para funcionar correctamente como controlador de dominio.  
+El DNS permite que los equipos del dominio localicen servicios internos como LDAP y Kerberos. Kerberos se utiliza para validar la identidad de los usuarios de forma segura dentro del dominio.
+
+En esta instalación, el propio servidor `samba-ad` actúa como servidor DNS interno del dominio `btis.inovate.cat`.
+
+Para comprobar la resolución del controlador de dominio se ejecutó:
+
+```bash
+host -t A samba-ad.btis.inovate.cat 127.0.0.1
+```
+
+También se comprobaron los registros SRV utilizados por LDAP y Kerberos:
+
+```bash
+host -t SRV _ldap._tcp.btis.inovate.cat 127.0.0.1
+host -t SRV _kerberos._udp.btis.inovate.cat 127.0.0.1
+```
+
+Estos registros son importantes porque permiten que los clientes del dominio encuentren automáticamente los servicios de autenticación.
+
+Para validar Kerberos se obtuvo un ticket con el usuario administrador del dominio:
+
+```bash
+kinit administrator@BTIS.INOVATE.CAT
+klist
+```
+
+El comando `kinit` solicita un ticket Kerberos para el usuario indicado, y `klist` permite comprobar que el ticket se ha generado correctamente.
+
+**Evidencia:** comprobación de registros DNS del dominio y ticket Kerberos activo.
+<img width="598" height="322" alt="{CD971244-28AB-4BAA-B6CE-63932DE6C054}" src="https://github.com/user-attachments/assets/40408e0f-4304-4846-9cd1-03df74847a67" />
+<img width="577" height="177" alt="{9E8F716B-7800-422A-8899-135B33438C5E}" src="https://github.com/user-attachments/assets/647a5acd-b36e-4e35-b72a-69a1a41f37b2" />
+
+
 
 ## 7. Creación de usuarios del dominio
 
