@@ -130,9 +130,63 @@ El comando `kinit` solicita un ticket Kerberos para el usuario indicado, y `klis
 <img width="598" height="322" alt="{CD971244-28AB-4BAA-B6CE-63932DE6C054}" src="https://github.com/user-attachments/assets/40408e0f-4304-4846-9cd1-03df74847a67" />
 <img width="577" height="177" alt="{9E8F716B-7800-422A-8899-135B33438C5E}" src="https://github.com/user-attachments/assets/647a5acd-b36e-4e35-b72a-69a1a41f37b2" />
 
-
-
 ## 7. Creación de usuarios del dominio
+Después de configurar el dominio Samba AD, se crearon los usuarios corporativos que representan a los empleados de InnovateTech.
+
+Estos usuarios se utilizan en diferentes partes del proyecto:
+
+- Inicio de sesión en el portal web interno.
+- Acceso SFTP con usuarios del dominio.
+- Asignación de permisos según el área de la empresa.
+- Pruebas de autenticación contra Samba AD.
+
+Los usuarios principales creados fueron:
+
+| Usuario | Función dentro del proyecto |
+|---|---|
+| `joan.garcia` | Usuario del área de ventas |
+| `maria.lopez` | Usuario del área de administración |
+| `pere.martinez` | Usuario del área de soporte |
+| `anna.puig` | Usuario del área de logística |
+| `admin.itb` | Usuario administrador del portal |
+
+El comando utilizado para crear usuarios en Samba AD fue:
+
+```bash
+sudo samba-tool user create nombre.usuario 'ContraseñaSegura' \
+  --given-name=Nombre \
+  --surname=Apellido \
+  --mail-address=nombre.usuario@btis.inovate.cat
+```
+
+Por ejemplo, para crear el usuario administrador del portal se utilizó una estructura como esta:
+
+```bash
+sudo samba-tool user create admin.itb 'Admin@ITB2026' \
+  --given-name=Admin \
+  --surname=ITB \
+  --mail-address=admin.itb@btis.inovate.cat
+```
+
+Una vez creados los usuarios, se comprobó que existían dentro del dominio con:
+
+```bash
+sudo samba-tool user list | grep -E "joan.garcia|maria.lopez|pere.martinez|anna.puig|admin.itb"
+```
+
+También se revisó la información de usuarios concretos con:
+
+```bash
+sudo samba-tool user show joan.garcia
+sudo samba-tool user show admin.itb
+```
+
+Estas comprobaciones permiten validar que los usuarios están registrados correctamente en Samba AD y pueden ser utilizados por otros servicios del proyecto.
+
+**Evidencia:** captura donde se comprueba la existencia de los usuarios principales del dominio.
+<img width="833" height="98" alt="{2A62F4C7-ECCB-4EE4-95AF-F688C5068579}" src="https://github.com/user-attachments/assets/b1802193-a350-4f9b-a806-b6ed05d888df" />
+<img width="565" height="563" alt="{A7235AE5-4DDC-473D-8EDB-7912A3E75C33}" src="https://github.com/user-attachments/assets/ff4c53a8-6eec-4aa0-95ef-dfb4b891353e" />
+<img width="558" height="566" alt="{349DA2B6-80F3-4D89-9DF5-F557AACE96B9}" src="https://github.com/user-attachments/assets/6a378f89-fc83-4a00-ac9c-6f9de6bd5605" />
 
 ## 8. Creación de grupos del dominio
 
