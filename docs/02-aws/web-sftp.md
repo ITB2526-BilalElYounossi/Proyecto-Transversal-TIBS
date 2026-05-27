@@ -320,13 +320,210 @@ sudo ss -tulpn | grep -E ':80|:443'
 
 Con esta configuración, el servidor `web-sftp` quedó preparado para publicar el portal interno de InnovateTech mediante NGINX.
 
-**Evidencia:** captura donde se compruebe la configuración de NGINX, la validación con `nginx -t`, el servicio activo y los puertos `80` y `443`.
+**Evidencia:** captura donde se comprueba la configuración de NGINX, , el servicio activo y los puertos `80` y `443`.
+
+<img width="1206" height="440" alt="{CCDBB08A-85F3-4458-A3B4-540BB655503B}" src="https://github.com/user-attachments/assets/172d167a-cf35-448e-b973-5a838dc03146" />
 
 ## 8. Configuración HTTPS y redirección HTTP a HTTPS
+Para mejorar la seguridad del portal interno, se configuró NGINX para servir la web mediante HTTPS.
+
+La configuración utiliza dos bloques principales:
+
+- Un bloque en el puerto `80`, encargado de redirigir todo el tráfico HTTP hacia HTTPS.
+- Un bloque en el puerto `443`, encargado de servir el portal web con certificado SSL.
+
+La redirección HTTP a HTTPS se configuró en NGINX con la siguiente directiva:
+
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    return 301 https://$host$request_uri;
+}
+```
+
+Con esta configuración, cualquier acceso por HTTP se redirige automáticamente a la misma URL utilizando HTTPS.
+
+El bloque HTTPS escucha en el puerto `443`:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name _;
+
+    ssl_certificate /etc/ssl/certs/innovatetech.crt;
+    ssl_certificate_key /etc/ssl/private/innovatetech.key;
+
+    root /var/www/innovatetech;
+    index index.php;
+}
+```
+
+Después de modificar la configuración, se validó la sintaxis de NGINX:
+
+```bash
+sudo nginx -t
+```
+
+También se comprobó la redirección HTTP a HTTPS con:
+
+```bash
+curl -I http://localhost/login.php
+```
+
+El resultado esperado fue una respuesta `301 Moved Permanently` hacia HTTPS:
+
+```text
+HTTP/1.1 301 Moved Permanently
+Location: https://localhost/login.php
+```
+
+Finalmente, se comprobó que el portal respondía correctamente por HTTPS:
+
+```bash
+curl -k -I https://localhost/login.php
+curl -k -I https://52.1.67.249/login.php
+```
+
+El resultado esperado fue:
+
+```text
+HTTP/1.1 200 OK
+```
+
+Con estas pruebas se valida que el servidor redirige correctamente HTTP hacia HTTPS y que el portal interno funciona mediante conexión cifrada.
+
+**Evidencia:** captura donde se ve la redirección HTTP a HTTPS y la respuesta correcta del portal mediante HTTPS.
+
+<img width="571" height="659" alt="{AE578978-675B-4B0C-9F41-522C877A2D03}" src="https://github.com/user-attachments/assets/e4b03814-3410-4975-ba77-c5bd1b9d9b53" />
+<img width="551" height="87" alt="{D6E3C6BC-5DFD-4F5A-B6B5-82C0163184A6}" src="https://github.com/user-attachments/assets/47c5d2f3-ce4a-44bd-a46c-ec7bf3b5d143" />
+Además, se comprobó visualmente desde el navegador que el portal carga mediante `https://52.1.67.249/login.php`. El navegador muestra el aviso de “No es seguro” porque el certificado utilizado es autofirmado, pero la conexión se realiza mediante HTTPS.
 
 ## 9. Certificado SSL con Subject Alternative Name
+Para servir el portal mediante HTTPS se generó un certificado SSL autofirmado para el servidor `web-sftp`.
+
+Inicialmente, el certificado funcionaba para cifrar la conexión, pero el navegador mostraba un aviso de seguridad porque el certificado no incluía la extensión `Subject Alternative Name` y no estaba firmado por una autoridad certificadora pública.
+
+Para corregir esta parte, se generó un nuevo certificado incluyendo los nombres alternativos necesarios:
+
+| Tipo | Valor |
+|---|---|
+| IP Address | `52.1.67.249` |
+| DNS | `web-sftp.btis.inovate.cat` |
+| DNS | `localhost` |
+
+Primero se creó un archivo de configuración para OpenSSL:
+
+```bash
+sudo nano /tmp/innovatetech-openssl.cnf
+```
+
+En este archivo se definieron los datos del certificado y los valores de `Subject Alternative Name`.
+
+Después se generó el certificado y la clave privada:
+
+```bash
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/ssl/private/innovatetech.key \
+  -out /etc/ssl/certs/innovatetech.crt \
+  -config /tmp/innovatetech-openssl.cnf
+```
+
+Posteriormente se ajustaron los permisos de los ficheros SSL:
+
+```bash
+sudo chmod 600 /etc/ssl/private/innovatetech.key
+sudo chmod 644 /etc/ssl/certs/innovatetech.crt
+```
+
+Para comprobar el contenido del certificado se ejecutó:
+
+```bash
+openssl x509 -in /etc/ssl/certs/innovatetech.crt -noout -subject -issuer -dates -ext subjectAltName
+```
+
+También se comprobó el certificado servido realmente por NGINX:
+
+```bash
+echo | openssl s_client -connect 52.1.67.249:443 -servername 52.1.67.249 2>/dev/null | openssl x509 -noout -subject -issuer -dates -ext subjectAltName
+```
+
+En la salida se comprobó que el certificado incluía:
+
+```text
+IP Address:52.1.67.249
+DNS:web-sftp.btis.inovate.cat
+DNS:localhost
+```
+
+Aunque el navegador sigue mostrando un aviso porque el certificado es autofirmado, la conexión HTTPS funciona correctamente y el certificado contiene los valores SAN necesarios. Para eliminar completamente el aviso del navegador sería necesario utilizar un dominio público y un certificado emitido por una autoridad certificadora reconocida, como Let's Encrypt.
+
+**Evidencia:** captura donde se comprueba que el certificado SSL contiene el `Subject Alternative Name` con la IP pública `52.1.67.249`, el DNS `web-sftp.btis.inovate.cat` y `localhost`.
+
+<img width="1105" height="134" alt="{8875B6AE-47DA-4F22-945A-DE0E62B0130B}" src="https://github.com/user-attachments/assets/0c9f682a-e9f7-4522-a488-4699fb74405c" />
+
 
 ## 10. Portal interno InnovateTech
+En el servidor `web-sftp` se desarrolló y desplegó el portal interno de InnovateTech.
+
+Este portal no es una página estática, sino una aplicación web en PHP que permite a los usuarios internos iniciar sesión con sus credenciales del dominio, consultar información almacenada en MariaDB y acceder a los servicios integrados del proyecto.
+
+El portal se encuentra en el directorio:
+
+```text
+/var/www/innovatetech
+```
+
+Los archivos principales de la aplicación son:
+
+| Archivo | Función |
+|---|---|
+| `login.php` | Formulario de inicio de sesión y autenticación contra Samba AD |
+| `index.php` | Dashboard principal del portal interno |
+| `logout.php` | Cierre de sesión del usuario |
+| `download.php` | Descarga de tablas permitidas en formato CSV o SQL |
+
+El portal ofrece las siguientes funcionalidades:
+
+- Inicio de sesión con usuarios del dominio Samba AD.
+- Visualización de datos reales procedentes de MariaDB.
+- Control de acceso por usuario.
+- Descarga de información en formato CSV o SQL.
+- Acceso a servicios multimedia integrados.
+- Interfaz tipo dashboard corporativo.
+- Diseño responsive para adaptarse a diferentes tamaños de pantalla.
+
+La estructura principal de la web se comprobó con:
+
+```bash
+ls -la /var/www/innovatetech
+```
+
+También se validó que los archivos PHP no tuvieran errores de sintaxis:
+
+```bash
+php -l /var/www/innovatetech/login.php
+php -l /var/www/innovatetech/index.php
+php -l /var/www/innovatetech/download.php
+php -l /var/www/innovatetech/logout.php
+```
+
+El portal se publica mediante NGINX y es accesible desde el navegador mediante la URL:
+
+```text
+https://52.1.67.249/login.php
+```
+
+Aunque el navegador muestra un aviso porque el certificado es autofirmado, la web se sirve mediante HTTPS y el acceso está cifrado.
+
+**Evidencia:** captura del directorio del portal y validación de sintaxis de los archivos PHP.
+<img width="696" height="278" alt="{941F3023-5257-4504-8882-7D3364CF77A0}" src="https://github.com/user-attachments/assets/24771400-80c0-4bce-88d0-e204b2757d18" />
+
+**Evidencia visual:** captura del portal interno cargando correctamente desde el navegador.
+<img width="927" height="1176" alt="{578BC624-AD7A-45F5-ABDF-033498426BF9}" src="https://github.com/user-attachments/assets/62ac54df-043c-41fe-912c-c4e00c6f18dd" />
+
+
 
 ## 11. Autenticación web con Samba AD mediante LDAP/TLS
 
