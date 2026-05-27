@@ -282,16 +282,67 @@ Asignación de perfil dentro del portal
         ↓
 Visualización de tablas permitidas desde MariaDB
 ```
+## 10. Comprobaciones realizadas
 <img width="1201" height="291" alt="{BE8C3A3C-267A-4822-BB8E-B6736011C831}" src="https://github.com/user-attachments/assets/993846b3-f52e-4283-9df3-8e16308e44ec" />
 En esta captura se comprueba que el usuario `joan.garcia` inicia sesión con credenciales del dominio y accede únicamente a la información asociada al perfil de ventas.
 
 <img width="1202" height="296" alt="{1A45F620-93F7-4E52-8E06-8A55C26604A4}" src="https://github.com/user-attachments/assets/9bc3de0a-6c67-4ce3-943c-ab8bf92b96f0" />
 En esta captura se observa que el usuario `admin.itb` pertenece al grupo `portal_admins` y dispone de acceso completo a las secciones del portal.
 
-## 10. Comprobaciones realizadas
-
 ## 11. Integración con el servidor web-sftp
+Una vez configurado el dominio Samba AD, se integró el servidor `web-sftp` con el dominio `BTIS.INOVATE.CAT`.
 
-## 12. Incidencias y soluciones
+Esta integración permite que el servidor web y el servicio SFTP puedan reconocer usuarios del dominio, en lugar de depender únicamente de usuarios locales de Linux.
 
-## 13. Conclusión
+El servidor `web-sftp` utiliza esta integración principalmente para:
+
+- Validar usuarios del dominio.
+- Permitir el acceso SFTP con cuentas corporativas.
+- Comprobar usuarios y grupos mediante Winbind.
+- Integrar el portal web con el sistema centralizado de identidad.
+
+Para comprobar que el servidor `web-sftp` está unido correctamente al dominio se ejecutó:
+
+```bash
+sudo net ads testjoin
+```
+
+El resultado esperado fue:
+
+```text
+Join is OK
+```
+
+También se comprobó que desde `web-sftp` se podían listar usuarios del dominio:
+
+```bash
+wbinfo -u | grep -E "joan.garcia|maria.lopez|pere.martinez|anna.puig|admin.itb"
+```
+
+Además, se verificó que Linux reconocía usuarios concretos del dominio mediante el comando `id`:
+
+```bash
+id 'BTIS\joan.garcia'
+id 'BTIS\admin.itb'
+```
+
+Estas comprobaciones demuestran que `web-sftp` puede resolver correctamente usuarios de Samba AD y utilizarlos en servicios como SFTP y el portal interno.
+
+**Evidencia:** comprobación de unión al dominio y resolución de usuarios AD desde `web-sftp`.
+<img width="898" height="153" alt="{9E77BE21-36E7-4C57-A7C3-DF780D818CDE}" src="https://github.com/user-attachments/assets/15aa9986-a3d1-4344-9e4d-3ac461bf8ee6" />
+
+En la evidencia se comprueba que el servidor `web-sftp` está unido correctamente al dominio y que reconoce usuarios de Samba AD como `joan.garcia` y `admin.itb`.
+
+## 12. Conclusión
+El servicio Samba AD quedó configurado como sistema central de identidad para InnovateTech.
+
+Gracias a esta configuración se consiguió centralizar la gestión de usuarios y grupos del dominio, permitiendo que otros servicios del proyecto utilicen las mismas credenciales corporativas.
+
+En concreto, Samba AD se integró con:
+
+- El portal web interno, para autenticar usuarios mediante LDAP/TLS.
+- El servicio SFTP, para permitir acceso con usuarios del dominio.
+- El servidor `web-sftp`, que reconoce usuarios y grupos mediante Winbind.
+- La organización por perfiles del portal, donde cada usuario visualiza información según su área.
+
+Esta configuración cumple con el requisito de disponer de un servicio de directorio activo dentro de la infraestructura del proyecto y permite una gestión de usuarios más segura, centralizada y realista.
