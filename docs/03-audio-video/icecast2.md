@@ -1,6 +1,6 @@
-# Icecast2 — Streaming de Audio
+# Icecast2 - Streaming de Audio
 
-**Máquina:** EC2-3 — Ubuntu 22.04 LTS  
+**Máquina:** EC2-3 - Ubuntu 22.04 LTS  
 **IP pública:** 100.31.147.184  
 **Puerto:** 8000 TCP
 
@@ -27,16 +27,16 @@ En este proyecto se utiliza para distribuir audio en directo dentro de la infrae
 
 ## 3. Instalación
 
-*Servidor: EC2-3 — Ubuntu 22.04 LTS — IP pública: 100.31.147.184 — Puerto 8000 TCP abierto en el Security Group de AWS*
+*Servidor: EC2-3 - Ubuntu 22.04 LTS - IP pública: 100.31.147.184 - Puerto 8000 TCP abierto en el Security Group de AWS*
 
-**Paso 1 — Corregir dependencias rotas (necesario en este servidor):**
+**Paso 1 - Corregir dependencias rotas (necesario en este servidor):**
 
 ```bash
 sudo dpkg --configure -a
 sudo apt --fix-broken install -y
 ```
 
-**Paso 2 — Actualizar e instalar Icecast2:**
+**Paso 2 - Actualizar e instalar Icecast2:**
 
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -49,14 +49,14 @@ Durante la instalación el asistente pregunta:
 - Relay password
 - Admin password
 
-**Paso 3 — Activar e iniciar el servicio:**
+**Paso 3 - Activar e iniciar el servicio:**
 
 ```bash
 sudo systemctl enable icecast2
 sudo systemctl start icecast2
 ```
 
-**Paso 4 — Verificar que funciona:**
+**Paso 4 - Verificar que funciona:**
 
 ```bash
 sudo systemctl status icecast2
@@ -97,11 +97,11 @@ sudo systemctl restart icecast2
 
 ---
 
-## 5. Configuración del emisor de audio — ffmpeg
+## 5. Configuración del emisor de audio - ffmpeg
 
 En lugar de usar BUTT desde un PC local, se emite audio directamente desde el servidor EC2-3 usando ffmpeg. Se han descargado 10 canciones en formato MP3 en el servidor que se emiten en bucle continuo a Icecast2 sin necesitar ningún PC externo ni micrófono.
 
-**Paso 1 — Descargar canciones en el servidor:**
+**Paso 1 - Descargar canciones en el servidor:**
 
 ```bash
 sudo mkdir -p /media/mu<img width="1778" height="515" alt="unnamed" src="https://github.com/user-attachments/assets/e7e53a55-1f96-4c0f-98ad-8e78a6566756" />
@@ -109,7 +109,7 @@ sica && cd /media/musica
 wget https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
 ```
 
-**Paso 2 — Emitir las canciones en bucle a Icecast2 con ffmpeg:**
+**Paso 2 - Emitir las canciones en bucle a Icecast2 con ffmpeg:**
 
 | Parámetro | Valor introducido | Por qué |
 |---|---|---|
@@ -162,7 +162,7 @@ Una vez ffmpeg está emitiendo las canciones, el servicio es accesible desde cua
 
 ---
 
-## 9. Security Group — SG-MULTIMEDIA
+## 9. Security Group - SG-MULTIMEDIA
 
 | Dirección | Protocolo | Puerto | Origen |
 |---|---|---|---|
