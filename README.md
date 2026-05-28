@@ -136,15 +136,15 @@ Proyecto-Transversal-TIBS/
 | [Infraestructura AWS](docs/02-aws/arquitectura.md) | Bilal | ✅ |
 | [Ansible](docs/02-aws/ansible.md) | Bilal | ✅ |
 | [Logs centralizados](docs/02-aws/logs.md) | Bilal | ✅ |
-| [Samba AD](docs/02-aws/samba-ad.md) | Taylor | 🔄 |
-| [Web + SFTP](docs/02-aws/web-sftp.md) | Taylor | 🔄 |
-| [Radio Icecast2](docs/03-audio-video/icecast-radio.md) | Serghei | 🔄 |
-| [Jellyfin VOD](docs/03-audio-video/jellyfin.md) | Serghei | 🔄 |
-| [Live Streaming](docs/03-audio-video/live-streaming.md) | Serghei | 🔄 |
-| [Jitsi Meet](docs/03-audio-video/jitsi.md) | Serghei | 🔄 |
-| [Base de datos](docs/04-BaseDeDades/disseny-er.md) | Izan | 🔄 |
-| [Usuarios y roles](docs/04-BaseDeDades/usuaris-rols.md) | Izan | 🔄 |
-| [Triggers y eventos](docs/04-BaseDeDades/triggers-events.md) | Izan | 🔄 |
+| [Samba AD](docs/02-aws/samba-ad.md) | Taylor | ✅ |
+| [Web + SFTP](docs/02-aws/web-sftp.md) | Taylor | ✅ |
+| [Radio Icecast2](docs/03-audio-video/icecast-radio.md) | Serghei | ✅ |
+| [Jellyfin VOD](docs/03-audio-video/jellyfin.md) | Serghei | ✅ |
+| [Live Streaming](docs/03-audio-video/live-streaming.md) | Serghei | ✅ |
+| [Jitsi Meet](docs/03-audio-video/jitsi.md) | Serghei | ✅ |
+| [Base de datos](docs/04-BaseDeDades/disseny-er.md) | Izan | ✅ |
+| [Usuarios y roles](docs/04-BaseDeDades/usuaris-rols.md) | Izan | ✅ |
+| [Triggers y eventos](docs/04-BaseDeDades/triggers-events.md) | Izan | ✅ |
 
 ---
 
@@ -166,4 +166,4 @@ Proyecto-Transversal-TIBS/
 | Jitsi Meet videoconferencia | ✅ |
 | MariaDB roles y permisos | ✅ |
 | SFTP autenticado contra AD | ✅ |
-| Live streaming vídeo en directo | 🔄 En curso |
+| Live streaming vídeo en directo | ✅ |
