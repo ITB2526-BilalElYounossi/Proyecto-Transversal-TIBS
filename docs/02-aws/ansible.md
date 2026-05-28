@@ -1,6 +1,6 @@
 # Ansible — Automatització de la infraestructura
 
-**Responsable:** Bilal El Younossi  
+**Responsable:** Bilal El Younossi i Izan Velázquez Cerrato
 **Màquina:** ansible-controller (`32.193.193.146` / `10.0.7.201`)  
 **Data:** Maig 2026
 
@@ -246,10 +246,16 @@ ansible all -i inventory/inventory.ini -m command \
 ## 9. Evidències
 
 ### Ping a totes les màquines
-> Afegir captura de `ansible all -i inventory/inventory.ini -m ping`
+
+<img width="708" height="942" alt="imatge" src="https://github.com/user-attachments/assets/43a01b42-7347-4dc3-8a19-7a8b7d9fa545" />
+
 
 ### Execució del playbook logs_clients.yml
-> Afegir captura de l'execució del playbook amb resultat OK
+
+<img width="714" height="797" alt="imatge" src="https://github.com/user-attachments/assets/9d3d809c-c895-459e-b74b-5d8d1054ccd8" />
+
+
 
 ### Inventari configurat
-> Afegir captura del fitxer `inventory.ini`
+
+<img width="711" height="474" alt="imatge" src="https://github.com/user-attachments/assets/d56caeda-df75-464c-a5c4-649c0f95476b" />
