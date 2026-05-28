@@ -321,3 +321,20 @@ dd if=/dev/zero bs=1M count=10 | curl -o /dev/null -w "Upload: %{speed_upload} b
 | Reducir bitrate Icecast2 de 128kbps a 96kbps | Menor consumo de ancho de banda manteniendo calidad aceptable |
 | Separar Jellyfin en su propio EC2 | Cada servicio tiene recursos dedicados sin competencia |
 | Configurar QoS en la VPC de AWS | Priorizar tráfico de videoconferencia sobre el resto |
+
+Propuesta de mejora de calidad de servicio multimedia
+Durante las pruebas de ancho de banda y funcionamiento de los servicios multimedia se detectó que la calidad del servicio no era completamente aceptable en determinadas situaciones de carga.
+Los resultados obtenidos mostraron:
+latencias elevadas,
+limitaciones en la velocidad de subida,
+degradación de calidad en streaming y videollamadas,
+y consumo elevado de ancho de banda en algunos servicios multimedia.
+Tras analizar el comportamiento de la infraestructura, se identificó que el principal problema estaba relacionado con el bitrate utilizado y el volumen de tráfico multimedia generado simultáneamente por Jellyfin, Icecast y Jitsi Meet.
+Como propuesta de mejora para un entorno empresarial real, se plantean las siguientes medidas:
+reducir el bitrate de streaming de audio en Icecast para disminuir el tamaño de los paquetes transmitidos,
+reducir la calidad de vídeo en Jellyfin (por ejemplo de 1080p a 720p) para minimizar el consumo de ancho de banda,
+aplicar compresión multimedia más eficiente mediante códecs optimizados,
+implementar políticas QoS (Quality of Service) para priorizar tráfico crítico como videollamadas,
+segmentar servicios multimedia en redes o VLAN independientes,
+y ampliar la capacidad de red e infraestructura cloud en caso de alta concurrencia.
+Estas medidas permitirían mejorar la estabilidad de la plataforma, reducir la latencia y optimizar el rendimiento general de los servicios multimedia desplegados en la infraestructura InnovateTech.
