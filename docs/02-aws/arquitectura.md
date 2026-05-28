@@ -1,55 +1,54 @@
 # Infraestructura AWS — InnovateTech
 
 **Responsable:** Bilal El Younossi  
-**Data:** Maig 2026
+**Fecha:** Mayo 2026
 
 ---
 
-## 1. Visió general
+## 1. Visión general
 
-Infraestructura desplegada a AWS regió `us-east-1` amb VPC dedicada, subnets pública i privada, 7 instàncies EC2, ALB, EFS compartit i serveis de xarxa.
+Infraestructura desplegada en AWS región `us-east-1` con VPC dedicada, subnets pública y privada, 7 instancias EC2, ALB, EFS compartido y servicios de red.
 
 ---
 
-## 2. Diagrama de l'arquitectura
+## 2. Diagrama de la arquitectura
 
 <img width="607" height="694" alt="imatge" src="https://github.com/user-attachments/assets/3095c451-b0ae-4596-ae93-a213af9b0e2e" />
 
-
 ---
 
-## 3. VPC i Xarxa
+## 3. VPC y Red
 
-| Paràmetre | Valor |
+| Parámetro | Valor |
 |-----------|-------|
-| Nom | vpc-innovatetech-vpc |
+| Nombre | vpc-innovatetech-vpc |
 | ID | vpc-0837b38c8e1749eeb |
 | CIDR | 10.0.0.0/16 |
-| Regió | us-east-1 |
-| DNS Hostnames | Activat |
-| DNS Resolution | Activat |
+| Región | us-east-1 |
+| DNS Hostnames | Activado |
+| DNS Resolution | Activado |
 
 ### Subnets
 
-| Nom | ID | CIDR | Tipus | AZ |
-|-----|----|------|-------|----|
+| Nombre | ID | CIDR | Tipo | AZ |
+|--------|----|------|------|----|
 | innovatetech-subPublica | subnet-001c139d2c6686a83 | 10.0.0.0/20 | Pública | us-east-1a |
 | innovatetech-subPublica2 | subnet-040af8871129f2119 | 10.0.50.0/24 | Pública | us-east-1b |
 | innovatetech-subPrivada | subnet-0e35e1475b888ea55 | 10.0.128.0/20 | Privada | us-east-1a |
 
-### Gateways i routing
+### Gateways y routing
 
-| Recurs | Funció |
-|--------|--------|
-| Internet Gateway | Connexió subnet pública a internet |
-| NAT Gateway | Connexió subnet privada a internet (sortida) |
-| ALB alb-innovatetech | Load Balancer davant de web-sftp, HTTP→HTTPS |
+| Recurso | Función |
+|---------|---------|
+| Internet Gateway | Conexión subnet pública a internet |
+| NAT Gateway | Conexión subnet privada a internet (salida) |
+| ALB alb-innovatetech | Load Balancer delante de web-sftp, HTTP→HTTPS |
 
 ---
 
-## 4. Instàncies EC2
+## 4. Instancias EC2
 
-| Màquina | IP Pública | IP Privada | Subnet | Key |
+| Máquina | IP Pública | IP Privada | Subnet | Key |
 |---------|-----------|------------|--------|-----|
 | web-sftp | 52.1.67.249 | 10.0.5.140 | Pública | T.pem |
 | multimedia | 32.198.236.17 | 10.0.8.36 | Pública | S.pem |
@@ -59,143 +58,138 @@ Infraestructura desplegada a AWS regió `us-east-1` amb VPC dedicada, subnets p�
 | mariadb | — | 10.0.142.205 | Privada | I.pem |
 | logs-server-private | — | 10.0.133.107 | Privada | I.pem |
 
-### Configuració comuna
+### Configuración común
 
 - SO: Ubuntu 24.04 LTS
-- Disc: 8 GB gp3 (logs-server-private: 20 GB)
-- Usuari administrador: `adminitb`
-- Autenticació: clau pública/privada (sense contrasenya)
-- Sudo: sense contrasenya
+- Disco: 8 GB gp3 (logs-server-private: 20 GB)
+- Usuario administrador: `adminitb`
+- Autenticación: clave pública/privada (sin contraseña)
+- Sudo: sin contraseña
 
 ---
 
-## 5. EFS — Sistema de fitxers compartit
+## 5. EFS — Sistema de ficheros compartido
 
-| Paràmetre | Valor |
+| Parámetro | Valor |
 |-----------|-------|
-| Nom | efs-innovatetech-logs |
+| Nombre | efs-innovatetech-logs |
 | ID | fs-09f8489813ea7d132 |
 | Mount target pública2 | 10.0.50.145 (subnet-040af8871129f2119) |
 | Mount target privada | 10.0.142.148 (subnet-0e35e1475b888ea55) |
 | Security Group | SG-EFS (sg-002a5243a5fb9a320) |
-| Muntat a | /mnt/efs-logs |
-| Capacitat | 8.0E (elàstica) |
+| Montado en | /mnt/efs-logs |
+| Capacidad | 8.0E (elástica) |
 
-El EFS és compartit entre `web-sftp` i `logs-server-private`. El servidor de logs escriu els logs de totes les EC2 al EFS via rsyslog, i web-sftp els llegeix directament per mostrar-los al portal web.
+El EFS es compartido entre `web-sftp` y `logs-server-private`. El servidor de logs escribe los logs de todas las EC2 en el EFS via rsyslog, y web-sftp los lee directamente para mostrarlos en el portal web.
 
 ---
 
 ## 6. Security Groups
 
 ### SG-WEB
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 22 | 0.0.0.0/0 |
 | Entrada | TCP | 80 | 0.0.0.0/0 |
 | Entrada | TCP | 443 | 0.0.0.0/0 |
-| Sortida | TCP | 3306 | 10.0.0.0/16 |
-| Sortida | TCP | 389 | 10.0.0.0/16 |
-| Sortida | TCP/UDP | 514 | 10.0.0.0/16 |
-| Sortida | TCP | 2049 | 10.0.0.0/16 |
+| Salida | TCP | 3306 | 10.0.0.0/16 |
+| Salida | TCP | 389 | 10.0.0.0/16 |
+| Salida | TCP/UDP | 514 | 10.0.0.0/16 |
+| Salida | TCP | 2049 | 10.0.0.0/16 |
 
 ### SG-MULTIMEDIA
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 22 | 0.0.0.0/0 |
 | Entrada | TCP | 8000 | 0.0.0.0/0 |
 | Entrada | TCP | 8096 | 0.0.0.0/0 |
-| Sortida | Tot | Tot | 0.0.0.0/0 |
+| Salida | Todo | Todo | 0.0.0.0/0 |
 
 ### SG-JITSI
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 22 | 0.0.0.0/0 |
 | Entrada | TCP | 8000 | 0.0.0.0/0 |
 | Entrada | TCP | 8443 | 0.0.0.0/0 |
 | Entrada | UDP | 10000 | 0.0.0.0/0 |
-| Sortida | TCP/UDP | 514 | 10.0.0.0/16 |
+| Salida | TCP/UDP | 514 | 10.0.0.0/16 |
 
 ### SG-AD (Samba AD)
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 22 | 10.0.0.0/16 |
 | Entrada | TCP/UDP | 88 | 10.0.0.0/16 |
 | Entrada | TCP/UDP | 389 | 10.0.0.0/16 |
 | Entrada | TCP | 445 | 10.0.0.0/16 |
 | Entrada | TCP | 636 | 10.0.0.0/16 |
-| Sortida | TCP | 80/443 | 0.0.0.0/0 |
+| Salida | TCP | 80/443 | 0.0.0.0/0 |
 
 ### SG-DB (MariaDB)
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 22 | 10.0.0.0/16 |
 | Entrada | TCP | 3306 | 10.0.0.0/16 |
-| Sortida | TCP | 80/443 | 0.0.0.0/0 |
+| Salida | TCP | 80/443 | 0.0.0.0/0 |
 
 ### SG-ANSIBLE
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 22 | 0.0.0.0/0 |
-| Sortida | TCP | 22 | 10.0.0.0/16 |
-| Sortida | TCP | 80/443 | 0.0.0.0/0 |
+| Salida | TCP | 22 | 10.0.0.0/16 |
+| Salida | TCP | 80/443 | 0.0.0.0/0 |
 
 ### SG-LOGS
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 22 | 0.0.0.0/0 |
 | Entrada | TCP | 514 | 10.0.0.0/16 |
 | Entrada | UDP | 514 | 10.0.0.0/16 |
-| Entrada | ICMP | Tot | 10.0.0.0/16 |
-| Sortida | TCP | 80/443 | 0.0.0.0/0 |
-| Sortida | TCP | 2049 | 10.0.0.0/16 |
+| Entrada | ICMP | Todo | 10.0.0.0/16 |
+| Salida | TCP | 80/443 | 0.0.0.0/0 |
+| Salida | TCP | 2049 | 10.0.0.0/16 |
 
 ### SG-EFS
-| Direcció | Protocol | Port | Origen/Destí |
-|----------|----------|------|--------------|
+| Dirección | Protocolo | Puerto | Origen/Destino |
+|-----------|-----------|--------|----------------|
 | Entrada | TCP | 2049 | 0.0.0.0/0 |
-| Entrada | Tot | Tot | 0.0.0.0/0 |
-| Sortida | TCP | 2049 | 0.0.0.0/0 |
-| Sortida | Tot | Tot | 0.0.0.0/0 |
+| Entrada | Todo | Todo | 0.0.0.0/0 |
+| Salida | TCP | 2049 | 0.0.0.0/0 |
+| Salida | Todo | Todo | 0.0.0.0/0 |
 
 ---
 
-## 7. Justificació de l'arquitectura
+## 7. Justificación de la arquitectura
 
-### Per què subnet pública i privada?
+### ¿Por qué subnet pública y privada?
 
-Les màquines que han de ser accessibles des d'internet (web, multimedia, jitsi, ansible) estan a la subnet pública. Les màquines que només han de ser accessibles internament (samba-ad, mariadb, logs-server) estan a la subnet privada amb accés a internet via NAT Gateway per a actualitzacions.
+Las máquinas que deben ser accesibles desde internet (web, multimedia, jitsi, ansible) están en la subnet pública. Las máquinas que solo deben ser accesibles internamente (samba-ad, mariadb, logs-server) están en la subnet privada con acceso a internet via NAT Gateway para actualizaciones.
 
-### Per què EFS en lloc de disc local per als logs?
+### ¿Por qué EFS en lugar de disco local para los logs?
 
-El EFS permet que `logs-server-private` escrigui els logs i que `web-sftp` els llegeixi simultàniament sense necessitat d'una API intermèdia. És elàstic, no es pot omplir i té alta disponibilitat multi-AZ.
+El EFS permite que `logs-server-private` escriba los logs y que `web-sftp` los lea simultáneamente sin necesidad de una API intermedia. Es elástico, no se puede llenar y tiene alta disponibilidad multi-AZ.
 
-### Per què ALB davant de web-sftp?
+### ¿Por qué ALB delante de web-sftp?
 
-L'ALB permet afegir futures instàncies web en alta disponibilitat sense canviar la URL pública. També gestiona la terminació SSL i redirigeix HTTP a HTTPS.
+El ALB permite añadir futuras instancias web en alta disponibilidad sin cambiar la URL pública. También gestiona la terminación SSL y redirige HTTP a HTTPS.
 
 ---
 
-## 8. Evidències
+## 8. Evidencias
 
-### Instàncies EC2 en execució
-<img width="1582" height="278" alt="imatge" src="https://github.com/user-attachments/assets/03216ae4-d534-42e8-908b-a30de0119032" />
+### Instancias EC2 en ejecución
+<img width="1582" height="278" alt="instancias EC2" src="https://github.com/user-attachments/assets/03216ae4-d534-42e8-908b-a30de0119032" />
 
+### VPC y Subnets
+<img width="1593" height="193" alt="VPC" src="https://github.com/user-attachments/assets/9af54659-2c7e-4b91-bcfa-f4e768b21391" />
+<img width="1596" height="251" alt="Subnets" src="https://github.com/user-attachments/assets/06956a98-ba05-4697-93f5-7b6892df5a18" />
 
-### VPC i Subnets
-<img width="1593" height="193" alt="imatge" src="https://github.com/user-attachments/assets/9af54659-2c7e-4b91-bcfa-f4e768b21391" />
-<img width="1596" height="251" alt="imatge" src="https://github.com/user-attachments/assets/06956a98-ba05-4697-93f5-7b6892df5a18" />
-
-
-
-### EFS muntat
+### EFS montado
 ```bash
 $ df -h | grep mnt
 10.0.50.145:/   8.0E     0  8.0E   0% /mnt/efs-logs   # web-sftp
 10.0.142.148:/  8.0E  623M  8.0E   1% /mnt/efs-logs   # logs-server-private
 ```
-<img width="1547" height="852" alt="imatge" src="https://github.com/user-attachments/assets/51ff99e1-4311-4a54-88f1-8d49d8d9d506" />
+<img width="1547" height="852" alt="EFS" src="https://github.com/user-attachments/assets/51ff99e1-4311-4a54-88f1-8d49d8d9d506" />
 
 ### Security Groups
-<img width="1595" height="482" alt="imatge" src="https://github.com/user-attachments/assets/8b904866-dd46-41a4-b022-a450bd47cc93" />
-
-
+<img width="1595" height="482" alt="Security Groups" src="https://github.com/user-attachments/assets/8b904866-dd46-41a4-b022-a450bd47cc93" />
