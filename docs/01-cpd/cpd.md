@@ -48,7 +48,8 @@ La sala ocupa **50 m²** con dimensiones de 10m x 5m y altura libre de 3m (2,5m 
 └─────────────────────────────────────────────┘
 ```
 
-> 📸 Añadir plano del edificio con la ubicación del CPD marcada.
+><img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/8943bcc8-481e-4d38-9488-56689068c736" />
+
 
 ---
 
@@ -85,7 +86,8 @@ El sistema de climatización es crítico para mantener los equipos en condicione
          ↑ Suelo técnico (aire frío)
 ```
 
-> 📸 Añadir fotografías del sistema de climatización instalado.
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/144b139a-b842-403d-9adb-c62d864d0e1b" />
+
 
 ---
 
@@ -126,7 +128,8 @@ SUELO TÉCNICO
 └── Canal central: Conexiones entre racks
 ```
 
-> 📸 Añadir fotografías del cableado organizado en los racks.
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/f6b9e0f9-b4f6-429e-9096-9fb10d2e87fa" />
+
 
 ---
 
@@ -160,6 +163,8 @@ SUELO TÉCNICO
 ```
 
 ---
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/6cb089bf-5df1-4fa9-bd94-df796de55dab" />
+
 
 ### 1.6 Plano de la sala CPD
 
@@ -181,7 +186,8 @@ SUELO TÉCNICO
     [Panel eléctrico]  [Extintores]
 ```
 
-> 📸 Añadir plano CAD o dibujo técnico de la sala.
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/ac33fbc7-33b7-4268-9c00-a0471a439581" />
+
 
 ---
 
@@ -239,7 +245,8 @@ RACK 1                    RACK 2
 └──────────┘              └──────────┘
 ```
 
-> 📸 Añadir fotografías de los racks con los equipos instalados.
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/e47db734-3286-4723-bb8c-cf0767614aa1" />
+
 
 ---
 
@@ -298,6 +305,7 @@ PDU Rack1A  PDU Rack1B    PDU Rack2A  PDU Rack2B
 PSU1        PSU2          PSU1        PSU2
 (todos los servidores)
 ```
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/9e007040-56da-4529-a865-0dd081987a1c" />
 
 ### 3.2 SAI — Sistemas de Alimentación Ininterrumpida
 
@@ -363,7 +371,8 @@ PSU1        PSU2          PSU1        PSU2
 └──────────────────────────────┘
 ```
 
-> 📸 Añadir fotografías de las cámaras instaladas.
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/f8049044-f053-489d-82cd-58902b14e06d" />
+
 
 ### 4.3 Sistemas de prevención y extinción de incendios
 
@@ -391,8 +400,8 @@ CPD                    Pasillo               Salida
 │      │ ─────────────►  │      │           │ 🚪   │
 └──────┘                 └──────┘           └──────┘
 ```
+<img width="1022" height="557" alt="image" src="https://github.com/user-attachments/assets/990ba2ba-9639-40cb-a28e-d978b384a8cd" />
 
-> 📸 Añadir plano de las vías de evacuación.
 
 ---
 
