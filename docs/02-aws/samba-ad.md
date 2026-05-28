@@ -287,9 +287,11 @@ Visualización de tablas permitidas desde MariaDB
 ```
 ## 10. Comprobaciones realizadas
 <img width="1201" height="291" alt="{BE8C3A3C-267A-4822-BB8E-B6736011C831}" src="https://github.com/user-attachments/assets/993846b3-f52e-4283-9df3-8e16308e44ec" />
+
 En esta captura se comprueba que el usuario `joan.garcia` inicia sesión con credenciales del dominio y accede únicamente a la información asociada al perfil de ventas.
 
 <img width="1202" height="296" alt="{1A45F620-93F7-4E52-8E06-8A55C26604A4}" src="https://github.com/user-attachments/assets/9bc3de0a-6c67-4ce3-943c-ab8bf92b96f0" />
+
 En esta captura se observa que el usuario `admin.itb` pertenece al grupo `portal_admins` y dispone de acceso completo a las secciones del portal.
 
 ## 11. Integración con el servidor web-sftp
