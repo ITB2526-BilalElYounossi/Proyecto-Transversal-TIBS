@@ -1,18 +1,18 @@
 # Icecast2 - Streaming de Audio
 
 **Máquina:** EC2-3 - Ubuntu 22.04 LTS  
-**IP pública:** 100.31.147.184  
+**IP pública:** 32.198.236.17  
 **Puerto:** 8000 TCP
 
 ---
 
 ## 1. Descripción del servicio
 
-Icecast2 es un servidor de streaming de audio de código abierto que permite transmitir audio en tiempo real a múltiples clientes simultáneamente. Actúa como punto central de distribución: recibe el audio de un cliente emisor (source client) y lo redistribuye a todos los oyentes conectados.
+Icecast2 es un servidor de streaming de audio de código abierto que permite transmitir audio en tiempo real a múltiples clientes simultáneamente. Actúa como punto central de distribución: recibe el audio de una fuente emisora y lo redistribuye a todos los oyentes conectados.
 
 Soporta los formatos MP3, OGG Vorbis y AAC, y dispone de un panel web integrado accesible desde el navegador para monitorizar el estado del servicio, los canales activos y el número de oyentes en tiempo real.
 
-En este proyecto se utiliza para distribuir audio en directo dentro de la infraestructura de InnovateTech, accesible tanto desde navegadores web como desde clientes multimedia como VLC.
+En este proyecto se utiliza para retransmitir una radio en directo dentro de la infraestructura de InnovateTech mediante la función de relay, accesible tanto desde navegadores web como desde clientes multimedia como VLC.
 
 ---
 
@@ -21,13 +21,15 @@ En este proyecto se utiliza para distribuir audio en directo dentro de la infrae
 - Descripción de la funcionalidad del servicio de audio.
 - Instalación y configuración de un servidor de streaming de audio (Icecast2).
 - Uso del formato de audio digital MP3.
-- Configuración del cliente de acceso (ffmpeg como source client).
+- Configuración del relay para retransmitir una radio en directo.
 - Acceso al servicio via navegador web.
 - Documentación de la instalación, configuración y pruebas del servicio.
 
+---
+
 ## 3. Instalación
 
-*Servidor: EC2-3 - Ubuntu 22.04 LTS - IP pública: 100.31.147.184 - Puerto 8000 TCP abierto en el Security Group de AWS*
+*Servidor: EC2-3 - Ubuntu 22.04 LTS - IP pública: 32.198.236.17 - Puerto 8000 TCP abierto en el Security Group de AWS*
 
 **Paso 1 - Corregir dependencias rotas (necesario en este servidor):**
 
@@ -44,10 +46,10 @@ sudo apt install icecast2 -y
 ```
 
 Durante la instalación el asistente pregunta:
-- Hostname
-- Source password
-- Relay password
-- Admin password
+- Hostname → `32.198.236.17`
+- Source password → `pirineus`
+- Relay password → `pirineus`
+- Admin password → `pirineus`
 
 **Paso 3 - Activar e iniciar el servicio:**
 
@@ -63,7 +65,6 @@ sudo systemctl status icecast2
 ```
 <img width="730" height="345" alt="unnamed" src="https://github.com/user-attachments/assets/1414b292-e400-498c-aa8e-32a72929282f" />
 
-
 ---
 
 ## 4. Configuración del servicio
@@ -78,65 +79,69 @@ Parámetros modificados:
 
 | Parámetro | Valor configurado | Descripción |
 |---|---|---|
-| `<hostname>` | 100.31.147.184 | IP pública del servidor EC2-3 en AWS |
+| `<hostname>` | 32.198.236.17 | IP pública del servidor EC2-3 en AWS |
 | `<port>` | 8000 | Puerto de escucha. Abierto en el Security Group de AWS |
-| `<source-password>` | [password] | Contraseña que usa ffmpeg para enviar audio al servidor |
-| `<relay-password>` | [password] | Contraseña para servidores relay |
+| `<source-password>` | pirineus | Contraseña para clientes source |
+| `<relay-password>` | pirineus | Contraseña para servidores relay |
 | `<admin-user>` | admin | Usuario del panel web de administración |
-| `<admin-password>` | [password] | Contraseña del panel web de administración |
-| `<mount-name>` | /stream | Ruta del canal de audio. URL: `http://IP:8000/stream` |
+| `<admin-password>` | pirineus | Contraseña del panel web de administración |
 
 Después de modificar el archivo, reiniciar el servicio:
 
 ```bash
 sudo systemctl restart icecast2
 ```
+
 <img width="723" height="200" alt="unnamed" src="https://github.com/user-attachments/assets/cfd360ea-93a3-4aec-81fc-5fdac719ede9" />
 <img width="735" height="306" alt="unnamed" src="https://github.com/user-attachments/assets/4c676f75-c7c2-434c-a325-33ae28d91605" />
 
-
 ---
 
-## 5. Configuración del emisor de audio - ffmpeg
+## 5. Configuración del relay de radio
 
-En lugar de usar BUTT desde un PC local, se emite audio directamente desde el servidor EC2-3 usando ffmpeg. Se han descargado 10 canciones en formato MP3 en el servidor que se emiten en bucle continuo a Icecast2 sin necesitar ningún PC externo ni micrófono.
+En lugar de emitir audio local, Icecast2 se configura como relay para retransmitir una radio en directo. El relay descarga el stream de Radio France Inter y lo redistribuye a los oyentes conectados a nuestro servidor.
 
-**Paso 1 - Descargar canciones en el servidor:**
+Se añade la siguiente configuración al final del archivo `/etc/icecast2/icecast.xml`, justo antes de `</icecast>`:
 
-```bash
-sudo mkdir -p /media/mu<img width="1778" height="515" alt="unnamed" src="https://github.com/user-attachments/assets/e7e53a55-1f96-4c0f-98ad-8e78a6566756" />
-sica && cd /media/musica
-wget https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
+```xml
+<relay>
+    <server>icecast.radiofrance.fr</server>
+    <port>80</port>
+    <mount>/franceinter/franceinter-midfi.mp3</mount>
+    <local-mount>/radio-spain</local-mount>
+    <on-demand>0</on-demand>
+    <relay-shoutcast-metadata>1</relay-shoutcast-metadata>
+</relay>
 ```
 
-**Paso 2 - Emitir las canciones en bucle a Icecast2 con ffmpeg:**
-
-| Parámetro | Valor introducido | Por qué |
+| Parámetro | Valor | Descripción |
 |---|---|---|
-| Type | Icecast | Tipo de servidor al que nos conectamos |
-| Name | InnovateTech Radio | Nombre descriptivo de la conexión |
-| Address | 100.31.147.184 | IP pública del servidor EC2-3 en AWS |
-| Port | 8000 | Puerto donde escucha Icecast2 |
-| Password | [source-password] | La configurada en icecast.xml |
-| Mount | stream | Canal configurado en icecast.xml (sin barra inicial) |
-| Format | MP3 — 128 kbps — 44100 Hz | Formato y calidad del audio emitido |
-<img width="1776" height="632" alt="unnamed" src="https://github.com/user-attachments/assets/9ead34e2-0a60-4c02-9cb5-4e8b0c5b07bf" />
-<img width="1778" height="515" alt="unnamed" src="https://github.com/user-attachments/assets/6b12cd28-427f-4f4e-8c4c-ef90e08b3ee2" />
+| `<server>` | icecast.radiofrance.fr | Servidor de origen del stream |
+| `<port>` | 80 | Puerto del servidor de origen |
+| `<mount>` | /franceinter/franceinter-midfi.mp3 | Mountpoint en el servidor de origen |
+| `<local-mount>` | /radio-spain | Mountpoint local en nuestro servidor |
+| `<on-demand>` | 0 | El relay arranca siempre, sin esperar oyentes |
+| `<relay-shoutcast-metadata>` | 1 | Retransmite los metadatos del stream original |
 
+Después de añadir el relay, reiniciar el servicio:
+
+```bash
+sudo systemctl restart icecast2
+```
+
+El relay se conecta automáticamente al servidor de origen y empieza a redistribuir el audio sin necesidad de ningún proceso adicional.
 
 ---
 
 ## 6. Acceso via navegador web
 
-Una vez ffmpeg está emitiendo las canciones, el servicio es accesible desde cualquier navegador:
+Una vez configurado el relay, el servicio es accesible desde cualquier navegador:
 
-- **Panel de administración:** http://100.31.147.184:8000
-- **URL directa del stream:** http://100.31.147.184:8000/stream
+- **Panel de administración:** http://32.198.236.17:8000
+- **URL directa del stream:** http://32.198.236.17:8000/radio-spain
+- **Estado del servicio:** http://32.198.236.17:8000/status.xsl
 
 <img width="1852" height="973" alt="unnamed" src="https://github.com/user-attachments/assets/400b420b-7aca-488b-9778-f136ed7c467b" />
-
-
-> 📸 **Capt![Uploading unnamed.png…]()
 
 ---
 
@@ -144,7 +149,7 @@ Una vez ffmpeg está emitiendo las canciones, el servicio es accesible desde cua
 
 | Formato | Descripción técnica | Uso en el proyecto |
 |---|---|---|
-| **MP3** | MPEG-1 Audio Layer III. Compresión con pérdida. Bitrate: 128 kbps. Compatible con todos los navegadores sin plugins. | Formato principal del stream. Las canciones están en MP3 y se emiten via ffmpeg desde el servidor. |
+| **MP3** | MPEG-1 Audio Layer III. Compresión con pérdida. Bitrate: 128 kbps. Compatible con todos los navegadores sin plugins. | Formato del stream relay. Radio France Inter emite en MP3 y Icecast2 lo redistribuye en el mismo formato. |
 | **OGG Vorbis** | Formato libre y abierto. Mejor calidad que MP3 al mismo bitrate. | Soportado por Icecast2. Alternativa libre al MP3. |
 | **AAC** | Advanced Audio Coding. Sucesor del MP3 con mejor calidad a menor bitrate. | Soportado por Icecast2. Usado en streaming móvil. |
 
@@ -157,8 +162,9 @@ Una vez ffmpeg está emitiendo las canciones, el servicio es accesible desde cua
 | `E: Unable to locate package icecast2` | Ejecutar `sudo apt update` antes de instalar |
 | `E: dpkg was interrupted` | Ejecutar `sudo dpkg --configure -a` y `sudo apt --fix-broken install -y` |
 | `ERR_CONNECTION_TIMED_OUT` al acceder al puerto 8000 | Puerto 8000 no estaba abierto en el Security Group de AWS. Se abrió en Inbound Rules. |
-| BUTT no funciona en los PCs del instituto (sin tarjeta de sonido) | Se sustituyó BUTT por ffmpeg ejecutado directamente en el servidor. |
-| El canal desaparece al cerrar el terminal | Usar `nohup` y `&` para ejecutar ffmpeg en segundo plano |
+| El relay de Los 40 no conecta | El servidor de Los 40 no permite relay externo. Se cambió a Radio France Inter que sí lo permite. |
+| Mountpoint `/stream` en uso al configurar relay | ffmpeg y el relay competían por el mismo mountpoint. Se asignó `/radio-spain` al relay para evitar conflictos. |
+| `Mountpoint /stream in use` en los logs | El servicio systemd de ffmpeg seguía reiniciándose. Se eliminó el servicio y se asignó un mountpoint diferente al relay. |
 
 ---
 
