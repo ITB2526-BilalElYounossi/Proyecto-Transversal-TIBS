@@ -1,7 +1,7 @@
 # Multimedia - Jellyfin (Streaming de Vídeo)
 
 **Máquina:** EC2-3 - Ubuntu 22.04 LTS  
-**IP pública:** 100.31.147.184  
+**IP pública:** 32.198.236.17  
 **Puerto:** 8096 TCP
 
 ---
@@ -10,7 +10,7 @@
 
 Jellyfin es un servidor de streaming de vídeo de código abierto que permite organizar, gestionar y distribuir contenido audiovisual a través de una interfaz web intuitiva. Soporta transcodificación en tiempo real y es accesible desde cualquier navegador moderno sin plugins adicionales.
 
-Se ha elegido Jellyfin porque el enunciado lo menciona explícitamente como opción válida, tiene interfaz web visual que facilita la demostración y soporta de forma nativa H.264 y MP4.
+Se ha elegido Jellyfin porque el enunciado lo menciona explícitamente como opción válida, tiene interfaz web visual que facilita la demostración y soporta de forma nativa H.264 y MP4. Además permite reproducir streams HLS en directo mediante archivos `.strm`.
 
 ---
 
@@ -20,13 +20,15 @@ Se ha elegido Jellyfin porque el enunciado lo menciona explícitamente como opci
 - Instalación y configuración de Jellyfin como servidor de vídeo.
 - Subida de al menos un vídeo accesible desde el servicio.
 - Uso del formato MP4 y el codec H.264.
+- Configuración de streaming en directo mediante archivos `.strm`.
 - Verificación de la reproducción desde navegador.
 - Documentación de la instalación, configuración y pruebas.
+
 ---
 
 ## 3. Instalación
 
-*Servidor: EC2-3 - Ubuntu 22.04 LTS - Puerto 8096 TCP abierto en el Security Group de AWS*
+*Servidor: EC2-3 - Ubuntu 22.04 LTS - IP pública: 32.198.236.17 - Puerto 8096 TCP abierto en el Security Group de AWS*
 
 **Paso 1 - Instalar usando el script oficial de Jellyfin:**
 
@@ -70,13 +72,13 @@ ls -la /media/videos/
 
 ### Paso 2 — Configuración inicial via wizard web
 
-Acceder a `http://100.31.147.184:8096` y seguir el wizard:
+Acceder a `http://32.198.236.17:8096` y seguir el wizard:
 
 | Paso | Acción |
 |---|---|
 | 1. Bienvenida | Hacer clic en Siguiente |
 | 2. Idioma | Seleccionar el idioma y hacer clic en Siguiente |
-| 3. Usuario administrador | Crear usuario: `jellyfin` con contraseña segura |
+| 3. Usuario administrador | Crear usuario: `jellyfin` con contraseña: `pirineus` |
 | 4. Biblioteca de medios | Hacer clic en Añadir biblioteca de medios |
 | 5. Tipo de biblioteca | Seleccionar *Vídeos y fotos personales* (acepta cualquier MP4) |
 | 6. Directorio | Añadir la ruta: `/media/videos` |
@@ -85,49 +87,136 @@ Acceder a `http://100.31.147.184:8096` y seguir el wizard:
 > <img width="904" height="542" alt="unnamed" src="https://github.com/user-attachments/assets/fb304ec5-356b-41c8-8b15-c57c0eab0ec6" />
 > <img width="1082" height="588" alt="unnamed" src="https://github.com/user-attachments/assets/71cd22c3-1dc4-4336-8f5b-b24eee1f64ee" />
 
+### Paso 3 — Usuarios creados en Jellyfin
+
+Se han creado los siguientes usuarios para que puedan acceder a Jellyfin:
+
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| jellyfin | pirineus | Administrador |
+| joan.garcia | pirineus | Usuario estándar |
+| maria.lopez | pirineus | Usuario estándar |
+| pere.martinez | pirineus | Usuario estándar |
+| anna.puig | pirineus | Usuario estándar |
+
+Los usuarios se crearon via API con el siguiente comando:
+
+```bash
+curl -s -X POST "http://localhost:8096/Users/New" \
+  -H "X-Emby-Token: TOKEN_ADMIN" \
+  -H "Content-Type: application/json" \
+  -d '{"Name":"joan.garcia","Password":"pirineus"}'
+```
 
 ---
 
-## 5. Formatos y codecs utilizados
+## 5. Configuración de streaming en directo — archivos .strm
+
+Jellyfin permite reproducir streams HLS en directo sin transcoding mediante archivos `.strm`. Cada archivo `.strm` contiene únicamente la URL del stream HLS.
+
+### Paso 1 — Crear directorio para directos
+
+```bash
+sudo mkdir -p /media/videos/directos
+sudo chown jellyfin:jellyfin /media/videos/directos
+```
+
+### Paso 2 — Crear archivo .strm con la URL del directo
+
+```bash
+echo "https://rtvelivestream.rtve.es/rtvesec/24h/24h_main_dvr_720.m3u8" | sudo tee /media/videos/directos/rtve24h.strm
+```
+
+### Paso 3 — Desactivar transcoding en Jellyfin (CRÍTICO)
+
+Sin este paso el stream HLS da error de reproducción.
+
+1. Panel admin → **Usuaris** → seleccionar usuario → **Edita**
+2. Pestaña **Reproducció**
+3. Desactivar:
+   - Reproducción de audio que requiere transcoding
+   - Reproducción de vídeo que requiere transcoding
+   - Reproducción de vídeo que requiere conversión sin recodificación
+   - Forzar transcoding de fuentes externas
+4. Dejar activado únicamente: **Reproducción multimedia**
+5. Guardar
+
+### Paso 4 — Añadir biblioteca en Jellyfin
+
+1. Panel admin → **Mediateques** → **+**
+2. Tipo → **Vídeos**
+3. Ruta → `/media/videos/directos`
+4. Guardar y escanear
+
+El directo aparece en Jellyfin como un vídeo normal y se reproduce directamente desde el navegador.
+
+---
+
+## 6. Formatos y codecs utilizados
 
 | Elemento | Valor | Descripción |
 |---|---|---|
 | Contenedor | MP4 (`.mp4`) | Formato estándar universal para distribución de vídeo en web |
 | Codec vídeo | H.264 (AVC) | Codec más compatible. Soportado por todos los navegadores modernos sin plugins |
 | Codec audio | AAC | Audio comprimido de alta calidad incluido en el contenedor MP4 |
-| Protocolo | HTTP Progressive | Jellyfin sirve el vídeo via HTTP. El navegador lo reproduce progresivamente |
+| Protocolo vídeo local | HTTP Progressive | Jellyfin sirve el vídeo via HTTP. El navegador lo reproduce progresivamente |
+| Protocolo streaming directo | HLS (HTTP Live Streaming) | Protocolo de streaming adaptativo usado por RTVE y otras plataformas |
+> <img width="604" height="379" alt="image" src="https://github.com/user-attachments/assets/f5a2524e-4920-4dfe-a01b-541cad541d2d" />
+> <img width="927" height="1013" alt="image" src="https://github.com/user-attachments/assets/c69d1a54-0e25-4906-96c8-98e0c4b6fd7c" />
 
 ---
 
-## 6. Reproducción desde el navegador
+## 7. Reproducción desde el navegador
 
-Una vez el vídeo está en la biblioteca, se accede desde cualquier navegador en `http://100.31.147.184:8096`. Jellyfin proporciona un player web integrado con controles de reproducción, volumen y calidad.
+Una vez el vídeo está en la biblioteca, se accede desde cualquier navegador en `http://32.198.236.17:8096`. Jellyfin proporciona un player web integrado con controles de reproducción, volumen y calidad.
 
 > <img width="1018" height="573" alt="unnamed" src="https://github.com/user-attachments/assets/5313df71-e4a5-4e43-8799-13e1255932f1" />
 > <img width="993" height="621" alt="unnamed" src="https://github.com/user-attachments/assets/e3826473-33b6-4501-ab1b-0c740559702e" />
 
 ---
 
-## 7. Validación del servicio
+## 8. Integración con MariaDB
 
-- Reproducción correcta del vídeo desde el navegador web.
-- Acceso funcional desde diferentes dispositivos.
-- El vídeo muestra la información correcta de codec (H.264) y formato (MP4).
+Los vídeos de Jellyfin se sincronizan automáticamente con la base de datos MariaDB de Izan mediante el script `jellyfin_sync.py`.
+
+**Flujo automático:**
+```
+Nuevo vídeo en Jellyfin → jellyfin_sync.py (cron cada 2h) → MariaDB → Portal web de Taylor
+```
+
+**Sincronización manual:**
+```bash
+cd /home/adminitb/multimedia_scripts
+python3 jellyfin_sync.py
+```
 
 ---
 
-## 8. Incidencias y soluciones
+## 9. Validación del servicio
+
+- Reproducción correcta del vídeo local desde el navegador web.
+- Reproducción del stream HLS en directo de RTVE 24h.
+- Acceso funcional desde diferentes dispositivos y usuarios.
+- Sincronización automática con MariaDB cada 2 horas.
+
+---
+
+## 10. Incidencias y soluciones
 
 | Incidencia | Solución aplicada |
 |---|---|
 | `Insufficient free space for /tmp` durante instalación | Ejecutar: `sudo mount -o remount,size=4G /tmp` antes de instalar |
-| El vídeo no aparece en la biblioteca *Películas* | Cambiar tipo de biblioteca de *Películas* a *Vídeos y fotos personales* (más permisivo) |
-| `Permission denied` al hacer scp del vídeo | Descargar el vídeo directamente en el servidor con `wget` en lugar de `scp` |
-| La biblioteca no escanea el vídeo nuevo | Hacer clic en *Escanear todas las mediatecas* desde el panel de administración de Jellyfin |
+| El vídeo no aparece en la biblioteca *Películas* | Cambiar tipo de biblioteca a *Vídeos y fotos personales* |
+| `Permission denied` al hacer scp del vídeo | Descargar el vídeo directamente en el servidor con `wget` |
+| La biblioteca no escanea el vídeo nuevo | Hacer clic en *Escanear todas las mediatecas* desde el panel de administración |
+| Jellyfin crashea con error core-dump (restart counter 74+) | Borrar BD corrupta: `sudo rm -rf /var/lib/jellyfin/data` y reinstalar |
+| Stream HLS da "Error de reproducció" en Jellyfin | Desactivar transcoding en la configuración del usuario en Jellyfin |
+| Live TV / M3U Tuner no reproduce los canales | Usar archivos `.strm` en lugar de Live TV. Más ligero y sin errores de transcoding |
+| URL de RTVE no accesible desde AWS | Usar la URL directa del stream HLS obtenida desde las herramientas de desarrollo del navegador (F12 → Network → filtrar m3u8) |
 
 ---
 
-## 9. Security Group — SG-MULTIMEDIA
+## 11. Security Group — SG-MULTIMEDIA
 
 | Dirección | Protocolo | Puerto | Origen |
 |---|---|---|---|
@@ -138,13 +227,13 @@ Una vez el vídeo está en la biblioteca, se accede desde cualquier navegador en
 
 ---
 
-## 10. Comprobaciones de Ancho de Banda
+## 12. Comprobaciones de Ancho de Banda
 
-### 10.1 Objetivo
+### 12.1 Objetivo
 
 Garantizar que la infraestructura desplegada es capaz de soportar los servicios de audio, vídeo y videoconferencia sin degradación del servicio.
 
-### 10.2 Requisitos mínimos obligatorios
+### 12.2 Requisitos mínimos obligatorios
 
 | | Requisito |
 |---|---|
@@ -154,7 +243,7 @@ Garantizar que la infraestructura desplegada es capaz de soportar los servicios 
 | ✅ | Clasificar el sistema como Aceptable o No aceptable |
 | ✅ | Incluir evidencias (capturas) y conclusión técnica |
 
-### 10.3 Herramientas utilizadas
+### 12.3 Herramientas utilizadas
 
 ```bash
 sudo apt install iperf3 -y
@@ -167,7 +256,7 @@ sudo apt install iperf3 -y
 | `dd + curl` | Mide la velocidad de subida enviando datos a un servidor externo |
 | `iperf3` | Mide el rendimiento de red entre dos equipos de la infraestructura |
 
-### 10.4 Prueba 1 - Sin servicios activos (línea base)
+### 12.4 Prueba 1 - Sin servicios activos (línea base)
 
 *Condiciones: ningún servicio multimedia activo. Medida de referencia.*
 
@@ -175,8 +264,8 @@ sudo apt install iperf3 -y
 ping -c 20 8.8.8.8
 curl -o /dev/null -w "Download: %{speed_download} bytes/s\n" https://proof.ovh.net/files/10Mb.dat
 dd if=/dev/zero bs=1M count=10 | curl -o /dev/null -w "Upload: %{speed_upload} bytes/s\n" -X POST -T - https://httpbin.org/post
-iperf3 -c iperf.worldstream.nl -t 10
 ```
+
 > <img width="729" height="472" alt="unnamed" src="https://github.com/user-attachments/assets/f24bbd6b-d3ba-4acd-ac1b-85f51dd7c7e6" />
 > <img width="858" height="117" alt="unnamed" src="https://github.com/user-attachments/assets/21a6649a-46dc-4e09-ab3a-b7f2f87ecb8b" />
 > <img width="854" height="195" alt="unnamed" src="https://github.com/user-attachments/assets/172b7e82-f45d-450b-9480-096bd3afbd23" />
@@ -187,7 +276,7 @@ iperf3 -c iperf.worldstream.nl -t 10
 | Upload | ~8,5 Mbps (1.061.317 bytes/s) |
 | Latencia (ping) | 1,97 ms |
 
-### 10.5 Prueba 2 - Con todos los servicios activos
+### 12.5 Prueba 2 - Con todos los servicios activos
 
 *Condiciones: Icecast2 emitiendo + Jellyfin reproduciendo vídeo + Jitsi Meet en videollamada activa.*
 
@@ -196,6 +285,7 @@ ping -c 20 8.8.8.8
 curl -o /dev/null -w "Download: %{speed_download} bytes/s\n" https://proof.ovh.net/files/100Mb.dat
 dd if=/dev/zero bs=1M count=10 | curl -o /dev/null -w "Upload: %{speed_upload} bytes/s\n" -X POST -T - https://httpbin.org/post
 ```
+
 > <img width="854" height="413" alt="unnamed" src="https://github.com/user-attachments/assets/4b568cbd-9426-4eff-9807-140cc0c7d511" />
 
 | Medida | Valor obtenido |
@@ -204,7 +294,7 @@ dd if=/dev/zero bs=1M count=10 | curl -o /dev/null -w "Upload: %{speed_upload} b
 | Upload | ~6,7 Mbps (843.120 bytes/s) |
 | Latencia (ping) | 1,95 ms |
 
-### 10.6 Análisis de resultados
+### 12.6 Análisis de resultados
 
 | Servicio | Consumo estimado de red | Tipo de tráfico |
 |---|---|---|
@@ -219,11 +309,11 @@ dd if=/dev/zero bs=1M count=10 | curl -o /dev/null -w "Upload: %{speed_upload} b
 | Upload (Mbps) | ~8,5 | ~6,7 | -1,8 Mbps |
 | Latencia (ms) | 1,97 | 1,95 | -0,02 ms |
 
-### 10.7 Clasificación del sistema
+### 12.7 Clasificación del sistema
 
 ✅ **ACEPTABLE** - La infraestructura soporta los tres servicios sin degradación significativa. La latencia se mantiene estable por debajo de los 2 ms en ambas pruebas. La velocidad de descarga es muy superior al consumo estimado de los servicios (~4–8 Mbps). La ligera bajada de upload con servicios activos es normal y no afecta al funcionamiento.
 
-### 10.8 Propuestas de optimización
+### 12.8 Propuestas de optimización
 
 | Propuesta | Beneficio esperado |
 |---|---|
