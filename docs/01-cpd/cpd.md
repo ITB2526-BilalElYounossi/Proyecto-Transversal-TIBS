@@ -34,11 +34,7 @@ La sala ocupa **50 m²** con dimensiones de 10m x 5m y altura libre de 3m (2,5m 
 
 <img width="776" height="781" alt="image" src="https://github.com/user-attachments/assets/0d77ced9-da80-45ee-bba8-e9353a88d0d0" />
 
-```
 
-
-
----
 
 ### 1.2 Climatización
 
