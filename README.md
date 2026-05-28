@@ -42,7 +42,7 @@ InnovateTech es una empresa dedicada a la provisión de servicios tecnológicos 
 | **Bilal** | Infraestructura AWS + Logs + Ansible | logs-server-private |
 | **Izan** | Base de datos + Ansible | mariadb + ansible-controller |
 | **Taylor** | Web + SFTP + Directorio Activo | web-sftp + samba-ad |
-| **Serghei** | Multimedia + Videoconferencias | multimedia + jitsi-meet |
+| **Serhii** | Multimedia + Videoconferencias | multimedia + jitsi-meet |
 
 ---
 
@@ -103,14 +103,14 @@ Proyecto-Transversal-TIBS/
 │   │   └── cpd.md                  → Propuesta CPD físico (Bilal)
 │   ├── 02-aws/
 │   │   ├── arquitectura.md         → VPC, subnets, EC2, SG (Bilal)
-│   │   ├── ansible.md              → Playbooks, inventario (Bilal)
+│   │   ├── ansible.md              → Playbooks, inventario (Bilal y Izan)
 │   │   ├── logs.md                 → Rsyslog + EFS (Bilal)
 │   │   ├── samba-ad.md             → Directorio Activo (Taylor)
 │   │   └── web-sftp.md             → NGINX, PHP, SFTP (Taylor)
 │   ├── 03-audio-video/
-│   │   ├── icecast-radio.md        → Radio en directo (Serghei)
+│   │   ├── icecast-radio.md        → Radio en directo (Serhii)
 │   │   ├── jellyfin.md             → Vídeo bajo demanda (Serghei)
-│   │   ├── live-streaming.md       → Canal vídeo en directo (Serghei)
+│   │   ├── live-streaming.md       → Canal vídeo en directo (Serhii)
 │   │   └── jitsi.md                → Videoconferencias (Serghei)
 │   └── 04-BaseDeDades/
 │       ├── disseny-er.md           → Modelo E/R (Izan)
