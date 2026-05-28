@@ -195,3 +195,7 @@ $ df -h | grep mnt
 ```
 <img width="1547" height="852" alt="imatge" src="https://github.com/user-attachments/assets/51ff99e1-4311-4a54-88f1-8d49d8d9d506" />
 
+### Security Groups
+<img width="1595" height="482" alt="imatge" src="https://github.com/user-attachments/assets/8b904866-dd46-41a4-b022-a450bd47cc93" />
+
+
