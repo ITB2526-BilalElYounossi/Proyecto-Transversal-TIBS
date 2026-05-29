@@ -2,7 +2,7 @@
 
 > Diseño e implementación de un Centro de Procesamiento de Datos (CPD) en la nube AWS para la empresa **InnovateTech**, incluyendo servicios multimedia, base de datos, directorio activo y gestión centralizada de logs.
 
-**Grupo:** TIBS (Taylor · Izan · Bilal · Serhii)  
+**Grupo:** G4 (Taylor · Izan · Bilal · Serhii)  
 **Ciclo:** CFGS Administración de Sistemas Informáticos en Red  
 **Centro:** Institut Tecnològic de Barcelona  
 **Curso:** 2025–2026  
