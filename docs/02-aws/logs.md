@@ -5,7 +5,16 @@
 **Fecha:** Mayo 2026
 
 ---
+## Índice
 
+1. [Descripción](#1-descripción)
+2. [Servidor de logs — logs-server-private](#2-servidor-de-logs--logs-server-private)
+3. [Configuración de los clientes](#3-configuración-de-los-clientes-todas-las-ec2)
+4. [web-sftp — Acceso al EFS para el portal web](#4-web-sftp--acceso-al-efs-para-el-portal-web)
+5. [Verificación](#5-verificación)
+6. [Estado del sistema](#6-estado-del-sistema)
+7. [Dashboard de logs en el portal web](#7-dashboard-de-logs-en-el-portal-web)
+8. [Evidencias](#8-evidencias)
 ## 1. Descripción
 
 Sistema de logs centralizado basado en **rsyslog** con almacenamiento compartido en **AWS EFS**. Todas las instancias EC2 envían sus logs al servidor `logs-server-private` por TCP/UDP puerto 514. El servidor almacena los logs clasificados por hostname y programa en el sistema de ficheros EFS (`efs-innovatetech-logs`), accesible simultáneamente desde `web-sftp` para su visualización en el portal web.
