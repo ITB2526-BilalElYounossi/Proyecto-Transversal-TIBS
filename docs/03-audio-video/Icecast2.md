@@ -5,7 +5,21 @@
 **Puerto:** 8000 TCP
 
 ---
+## Índice
 
+1. [Descripción del servicio](#1-descripción-del-servicio)
+2. [Requerimientos](#2-requerimientos)
+3. [Instalación](#3-instalación)
+4. [Configuración del servicio](#4-configuración-del-servicio)
+5. [Configuración del emisor de audio — ffmpeg](#5-configuración-del-emisor-de-audio--ffmpeg)
+   - [Por qué ffmpeg y no relay nativo de Icecast2](#por-qué-ffmpeg-y-no-relay-nativo-de-icecast2)
+   - [Paso 1 — Verificar que el stream es accesible](#paso-1--verificar-que-el-stream-es-accesible)
+   - [Paso 2 — Crear el servicio systemd](#paso-2--crear-el-servicio-systemd)
+   - [Paso 3 — Activar e iniciar el servicio](#paso-3--activar-e-iniciar-el-servicio)
+6. [Acceso vía navegador web](#6-acceso-via-navegador-web)
+7. [Formatos de audio utilizados](#7-formatos-de-audio-utilizados)
+8. [Incidencias y soluciones](#8-incidencias-y-soluciones)
+9. [Security Group — SG-MULTIMEDIA](#9-security-group---sg-multimedia)
 ## 1. Descripción del servicio
 
 Icecast2 es un servidor de streaming de audio de código abierto que permite transmitir audio en tiempo real a múltiples clientes simultáneamente. Actúa como punto central de distribución: recibe el audio de una fuente emisora y lo redistribuye a todos los oyentes conectados.
