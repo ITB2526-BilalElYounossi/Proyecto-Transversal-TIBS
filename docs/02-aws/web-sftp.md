@@ -1,5 +1,28 @@
 # Web-SFTP — Portal interno, NGINX y transferencia segura
+## Índice
 
+1. [Objetivo del servidor web-sftp](#1-objetivo-del-servidor-web-sftp)
+2. [Datos del servidor](#2-datos-del-servidor)
+3. [Usuario de administración y acceso SSH](#3-usuario-de-administración-y-acceso-ssh)
+4. [Preparación del servidor](#4-preparación-del-servidor)
+5. [Instalación de paquetes necesarios](#5-instalación-de-paquetes-necesarios)
+6. [Configuración de DNS y unión al dominio Samba AD](#6-configuración-de-dns-y-unión-al-dominio-samba-ad)
+7. [Instalación y configuración de NGINX](#7-instalación-y-configuración-de-nginx)
+8. [Configuración HTTPS y redirección HTTP a HTTPS](#8-configuración-https-y-redirección-http-a-https)
+9. [Certificado SSL con Subject Alternative Name](#9-certificado-ssl-con-subject-alternative-name)
+10. [Portal interno InnovateTech](#10-portal-interno-innovatetech)
+11. [Autenticación web con Samba AD mediante LDAP/TLS](#11-autenticación-web-con-samba-ad-mediante-ldaptls)
+12. [Conexión del portal con MariaDB](#12-conexión-del-portal-con-mariadb)
+13. [Control de acceso por usuario en el portal](#13-control-de-acceso-por-usuario-en-el-portal)
+14. [Descarga CSV/SQL desde el portal](#14-descarga-csvsql-desde-el-portal)
+15. [Configuración del servicio SFTP](#15-configuración-del-servicio-sftp)
+16. [Estructura de carpetas SFTP](#16-estructura-de-carpetas-sftp)
+17. [Integración SFTP con MariaDB](#17-integración-sftp-con-mariadb)
+18. [Automatización con cron](#18-automatización-con-cron)
+19. [Integración con servicios multimedia](#19-integración-con-servicios-multimedia)
+20. [Conclusión](#22-conclusión)
+
+21. 
 ## 1. Objetivo del servidor web-sftp
 En esta parte del proyecto se configuró el servidor `web-sftp`, encargado de ofrecer el portal web interno de InnovateTech y el servicio de transferencia segura de ficheros mediante SFTP.
 
