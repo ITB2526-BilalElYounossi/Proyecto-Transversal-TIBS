@@ -22,7 +22,7 @@
 19. [Integración con servicios multimedia](#19-integración-con-servicios-multimedia)
 20. [Conclusión](#22-conclusión)
 
-21. 
+    
 ## 1. Objetivo del servidor web-sftp
 En esta parte del proyecto se configuró el servidor `web-sftp`, encargado de ofrecer el portal web interno de InnovateTech y el servicio de transferencia segura de ficheros mediante SFTP.
 
