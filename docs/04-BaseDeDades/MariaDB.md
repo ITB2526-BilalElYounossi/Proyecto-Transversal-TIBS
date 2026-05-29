@@ -1,4 +1,26 @@
 # Base de Datos — InnovateTech
+---
+## Índice
+
+- [1. Contexto](#1-contexto)
+- [2. Información general](#2-información-general)
+- [3. Instalación de MariaDB](#3-instalación-de-mariadb)
+- [4. Creación de la base de datos](#4-creación-de-la-base-de-datos)
+- [5. Diseño Entidad-Relación](#5-diseño-entidad-relación)
+- [6. Modelo relacional](#6-modelo-relacional)
+- [7. Creación de tablas](#7-creación-de-tablas)
+- [8. Estructura de tablas](#8-estructura-de-tablas)
+- [9. Datos de prueba](#9-datos-de-prueba)
+- [10. Plantilla de mediciones de ancho de banda](#10-plantilla-de-mediciones-de-ancho-de-banda)
+- [11. Roles y permisos](#11-roles-y-permisos)
+- [12. Usuario web con permisos mínimos](#12-usuario-web-con-permisos-mínimos)
+- [13. Script automatizado de usuarios](#13-script-automatizado-de-usuarios)
+- [14. Triggers de auditoría](#14-triggers-de-auditoría)
+- [15. Events y backups automáticos](#15-events-y-backups-automáticos)
+- [16. Seguridad aplicada](#16-seguridad-aplicada)
+- [17. Validación final](#17-validación-final)
+- [18. Plantilla de mediciones de ancho de banda](#18-plantilla-de-mediciones-de-ancho-de-banda)
+- [19. Conclusión](#19-conclusión)
 
 ---
 
