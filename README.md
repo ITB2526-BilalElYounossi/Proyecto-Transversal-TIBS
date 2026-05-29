@@ -9,7 +9,63 @@
 **Entrega:** 28 de mayo de 2026
 
 ---
+# InnovateTech — Proyecto Transversal ASIX
 
+## Índice general de documentación
+
+### 01. CPD — Centro de Procesamiento de Datos
+
+- [CPD — Diseño físico e infraestructura](docs/01-cpd/cpd.md)
+
+---
+
+### 02. AWS — Infraestructura cloud
+
+- [Arquitectura AWS](docs/02-aws/arquitectura.md)
+- [Automatización con Ansible](docs/02-aws/ansible.md)
+- [Servidor Samba AD](docs/02-aws/samba-ad.md)
+- [Servidor Web-SFTP](docs/02-aws/web-sftp.md)
+- [Logs centralizados](docs/02-aws/logs.md)
+
+---
+
+### 03. Audio y vídeo
+
+- [Icecast2 — Radio en streaming](docs/03-audio-video/Icecast2.md)
+- [Jitsi Meet — Videoconferencia](docs/03-audio-video/Jitsi.md)
+- [Jellyfin — Streaming de vídeo](docs/03-audio-video/multimedia.md)
+
+---
+
+### 04. Base de datos
+
+- [MariaDB — Diseño, configuración y seguridad](docs/04-BaseDeDades/MariaDB.md)
+
+---
+
+
+## Estructura del repositorio
+
+```text
+docs/
+├── 01-cpd/
+│   └── cpd.md
+│
+├── 02-aws/
+│   ├── ansible.md
+│   ├── arquitectura.md
+│   ├── logs.md
+│   ├── samba-ad.md
+│   └── web-sftp.md
+│
+├── 03-audio-video/
+│   ├── Icecast2.md
+│   ├── Jitsi.md
+│   └── multimedia.md
+│
+└── 04-BaseDeDades/
+    └── MariaDB.md
+```
 ## Descripción del proyecto
 
 InnovateTech es una empresa dedicada a la provisión de servicios tecnológicos que necesita modernizar su capacidad operativa. Este proyecto diseña e implementa un CPD eficiente en la nube AWS que integra:
