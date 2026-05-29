@@ -4,7 +4,32 @@
 **Fecha:** Mayo 2026
 
 ---
+## Índice
 
+1. [Ubicación física](#1-ubicación-física)
+   - [1.1 Situación de la sala en el edificio](#11-situación-de-la-sala-en-el-edificio)
+   - [1.2 Climatización](#12-climatización)
+   - [1.3 Medidas para dificultar la identificación de la sala](#13-medidas-para-dificultar-la-identificación-de-la-sala)
+   - [1.4 Distribución y gestión del cableado](#14-distribución-y-gestión-del-cableado)
+   - [1.5 Suelo técnico y techo técnico](#15-suelo-técnico-y-techo-técnico)
+   - [1.6 Plano de la sala CPD](#16-plano-de-la-sala-cpd)
+   - [1.7 Estructuración de los racks](#17-estructuración-de-los-racks)
+
+2. [Infraestructura IT](#2-infraestructura-it)
+   - [2.1 Servidores](#21-servidores)
+   - [2.2 Patch panels](#22-patch-panels)
+   - [2.3 Switches](#23-switches)
+
+3. [Infraestructura eléctrica](#3-infraestructura-eléctrica)
+   - [3.1 Alimentación redundante](#31-alimentación-redundante)
+   - [3.2 SAI — Sistemas de Alimentación Ininterrumpida](#32-sai--sistemas-de-alimentación-ininterrumpida)
+
+4. [Seguridad física](#4-seguridad-física)
+   - [4.1 Control de acceso](#41-control-de-acceso)
+   - [4.2 Videovigilancia](#42-videovigilancia)
+   - [4.3 Sistemas de prevención y extinción de incendios](#43-sistemas-de-prevención-y-extinción-de-incendios)
+   - [4.4 Vías de evacuación](#44-vías-de-evacuación)
+     
 ## 1. Ubicación física
 
 ### 1.1 Situación de la sala en el edificio
