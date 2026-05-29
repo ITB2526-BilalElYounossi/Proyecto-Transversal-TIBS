@@ -5,7 +5,26 @@
 **Fecha:** Mayo 2026
 
 ---
+## Índice
 
+1. [Descripción](#1-descripción)
+2. [Instalación](#2-instalación)
+3. [Estructura del proyecto](#3-estructura-del-proyecto)
+4. [Inventario — inventory.ini](#4-inventario--inventoryini)
+5. [Playbooks](#5-playbooks)
+   - [logs_baseline.yml — Configuración del servidor de logs](#logs_baselineyml--configuración-del-servidor-de-logs)
+   - [logs_clients.yml — Configuración de los clientes rsyslog](#logs_clientsyml--configuración-de-los-clientes-rsyslog)
+   - [mariadb.yml — Configuración de MariaDB](#mariadbyml--configuración-de-mariadb)
+6. [Ejecución de los playbooks](#6-ejecución-de-los-playbooks)
+7. [Verificación](#7-verificación)
+   - [Ping a todas las máquinas](#ping-a-todas-las-máquinas)
+   - [Enviar logs de prueba a todas las máquinas](#enviar-logs-de-prueba-a-todas-las-máquinas)
+8. [Máquinas automatizadas](#8-máquinas-automatizadas)
+9. [Evidencias](#9-evidencias)
+   - [Ping a todas las máquinas](#ping-a-todas-las-máquinas-1)
+   - [Ejecución del playbook logs_clients.yml](#ejecución-del-playbook-logs_clientsyml)
+   - [Inventario configurado](#inventario-configurado)
+     
 ## 1. Descripción
 
 Ansible se utiliza para automatizar la configuración de las máquinas de la infraestructura InnovateTech. Desde el `ansible-controller` se gestionan todas las instancias EC2 mediante SSH con clave pública/privada.
