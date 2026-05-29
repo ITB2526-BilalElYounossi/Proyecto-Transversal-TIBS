@@ -4,7 +4,31 @@
 **Fecha:** Mayo 2026
 
 ---
+## Índice
 
+1. [Visión general](#1-visión-general)
+2. [Diagrama de la arquitectura](#2-diagrama-de-la-arquitectura)
+3. [VPC y Red](#3-vpc-y-red)
+4. [Instancias EC2](#4-instancias-ec2)
+5. [EFS — Sistema de ficheros compartido](#5-efs--sistema-de-ficheros-compartido)
+6. [Security Groups](#6-security-groups)
+   - [SG-WEB](#sg-web)
+   - [SG-MULTIMEDIA](#sg-multimedia)
+   - [SG-JITSI](#sg-jitsi)
+   - [SG-AD Samba AD](#sg-ad-samba-ad)
+   - [SG-DB MariaDB](#sg-db-mariadb)
+   - [SG-ANSIBLE](#sg-ansible)
+   - [SG-LOGS](#sg-logs)
+   - [SG-EFS](#sg-efs)
+7. [Justificación de la arquitectura](#7-justificación-de-la-arquitectura)
+   - [¿Por qué subnet pública y privada?](#por-qué-subnet-pública-y-privada)
+   - [¿Por qué EFS en lugar de disco local para los logs?](#por-qué-efs-en-lugar-de-disco-local-para-los-logs)
+   - [¿Por qué ALB delante de web-sftp?](#por-qué-alb-delante-de-web-sftp)
+8. [Evidencias](#8-evidencias)
+   - [Instancias EC2 en ejecución](#instancias-ec2-en-ejecución)
+   - [VPC y Subnets](#vpc-y-subnets)
+   - [EFS montado](#efs-montado)
+   - [Security Groups](#security-groups)
 ## 1. Visión general
 
 Infraestructura desplegada en AWS región `us-east-1` con VPC dedicada, subnets pública y privada, 7 instancias EC2, ALB, EFS compartido y servicios de red.
